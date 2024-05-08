@@ -1,0 +1,214 @@
+<table border=0 cellpadding=0 cellspacing=0 align="center" border="0">
+  <tr>
+    <td style="font-family: -apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.48em; ">
+      <div>
+        <table border=1>
+            xxxxx
+        </table>
+        <table border=0 cellpadding=0 cellspacing=0 border=0 cellpadding=0 cellspacing=0>
+          <tr>
+            <td align="left" style="padding-left: 4px; font-family: -apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.48em; ">
+              <p>#​506 — May 7, 2024</p>
+            </td>
+            <td align="right" style="padding-right: 4px; font-family: -apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.48em; ">
+              <p>
+                <a href="https://golangweekly.com/link/154743/rss" style=" color: #0099b4;">Unsub</a>|
+                <a href="https://golangweekly.com/link/154744/rss" style=" color: #0099b4;">Web Version</a></p>
+            </td>
+          </tr>
+        </table>
+        <table border=0 cellpadding=0 cellspacing=0 border=0 cellpadding=0 cellspacing=0>
+          <tr>
+            <td style="font-family: -apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.48em; padding-top: 0; padding-right: 12px; padding-left: 12px;">
+              <p>Go Weekly</p>
+            </td>
+          </tr>
+        </table>
+        <table border=0 cellpadding=0 cellspacing=0 border=0 cellpadding=0 cellspacing=0>
+          <tr>
+            <td style="font-family: -apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.48em; ">
+              <a href="https://golangweekly.com/link/154746/rss" style=" color: #0099b4;">
+                <img src="https://res.cloudinary.com/cpress/image/upload/w_1280,e_sharpen:60,q_auto/g9yzviwurtennzrzhhij.jpg" width="640" style=" line-height: 100%; "></a>
+            </td>
+          </tr>
+        </table>
+        <table border=0 cellpadding=0 cellspacing=0 border=0 cellpadding=0 cellspacing=0>
+          <tr>
+            <td style="font-family: -apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.48em; padding-top: 0px; padding-right: 15px; padding-left: 15px;">
+              <p>
+                <span style="font-weight: 600; font-size: 1.2em !important; color: #000;">
+                  <a href="https://golangweekly.com/link/154746/rss" title="go.dev" style=" color: #0099b4; font-size: 1.1em; line-height: 1.4em;">Evolving the Go Standard Library with
+                    <code>math/rand/v2</code></a>
+                </span>— Generating random numbers takes much more than you might think. Go’s initial RNG has multiple flaws, but fixing it breaks repeatability requirements. So, the core team created a “version 2” package that keeps Go’s compatibility promise and sets forth principles for future such 'version 2' packages generally.</p>
+              <p>Russ Cox (The Go Team)</p>
+            </td>
+          </tr>
+        </table>
+        <table border=0 cellpadding=0 cellspacing=0 border=0 cellpadding=0 cellspacing=0>
+          <tr>
+            <td style="font-family: -apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.48em; padding-top: 0px; padding-right: 15px; padding-left: 15px;">
+              <p>
+                <em>QUICK BITS:</em></p>
+              <ul>
+                <li>
+                  <p>📘 We have no affiliation with this, but saw Packt and Humble Bundle have paired up to do a
+                    <a href="https://golangweekly.com/link/154775/rss" style=" color: #0099b4; font-weight: 500 !important; ">Go programming book 'Humble Bundle'</a>where you can get a lot of Go books for, well, you name the price.</p></li>
+                <li>
+                  <p>🚀 It's interesting to see Go entering the heart of the Ruby ecosystem by powering
+                    <a href="https://golangweekly.com/link/154751/rss" style=" color: #0099b4; font-weight: 500 !important; ">Thruster, a new HTTP/2 server for
+                      <em>Ruby on Rails</em>apps.</a></p>
+                </li>
+              </ul>
+            </td>
+          </tr>
+        </table>
+        <table border=0 cellpadding=0 cellspacing=0 border=0 cellpadding=0 cellspacing=0>
+          <tr>
+            <td style="font-family: -apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.48em; padding-top: 0px; padding-right: 15px; padding-left: 15px;">
+              <p>📄
+                <a href="https://golangweekly.com/link/154754/rss" style=" color: #0099b4; font-weight: 500 !important;">Building a Highly-Available Search Engine using SQLite</a>– Thanks to the Go-powered
+                <a href="https://golangweekly.com/link/154755/rss" style=" color: #0099b4; font-weight: 500 !important;">rqlite.</a>
+                <cite>Philip O'Toole</cite></p>
+              <p>📄
+                <a href="https://golangweekly.com/link/154756/rss" style=" color: #0099b4; font-weight: 500 !important;">Constraining Go Type Parameter Pointers</a>
+                <cite>Merovius</cite></p>
+              <p>📄
+                <a href="https://golangweekly.com/link/154757/rss" style=" color: #0099b4; font-weight: 500 !important;">The Foundations of a Go Web Application</a>
+                <cite>Willem Schots</cite></p>
+            </td>
+          </tr>
+        </table>
+        <table border=0 cellpadding=0 cellspacing=0 border=0 cellpadding=0 cellspacing=0>
+          <tr>
+            <td style="font-family: -apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.48em; padding-top: 0; padding-right: 0; padding-left: 0;">
+              <p>🛠 Code &amp; Tools</p>
+            </td>
+          </tr>
+        </table>
+        <table border=0 cellpadding=0 cellspacing=0 border=0 cellpadding=0 cellspacing=0>
+          <tr>
+            <td style="font-family: -apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.48em; ">
+              <a href="https://golangweekly.com/link/154758/rss" style=" color: #0099b4;">
+                <img src="https://res.cloudinary.com/cpress/image/upload/w_1280,e_sharpen:60,q_auto/v1pu4yuxwkyhzdvgejjv.jpg" width="640" style=" line-height: 100%; "></a>
+            </td>
+          </tr>
+        </table>
+        <table border=0 cellpadding=0 cellspacing=0 border=0 cellpadding=0 cellspacing=0>
+          <tr>
+            <td style=" font-family: -apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.48em; "></td>
+          </tr>
+        </table>
+        <table border=0 cellpadding=0 cellspacing=0 border=0 cellpadding=0 cellspacing=0>
+          <tr>
+            <td style=" font-family: -apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.48em; "></td>
+          </tr>
+        </table>
+        <table border=0 cellpadding=0 cellspacing=0 border=0 cellpadding=0 cellspacing=0>
+          <tr>
+            <td style="font-family: -apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.48em; ">
+              <a href="https://golangweekly.com/link/154763/rss" style=" color: #0099b4;">
+                <img src="https://res.cloudinary.com/cpress/image/upload/w_1280,e_sharpen:60,q_auto/p3lauuktk6ouimbkygib.jpg" width="640" style=" line-height: 100%; "></a>
+            </td>
+          </tr>
+        </table>
+        <table border=0 cellpadding=0 cellspacing=0 border=0 cellpadding=0 cellspacing=0>
+          <tr>
+            <td style=" font-family: -apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.48em; "></td>
+          </tr>
+        </table>
+        <table border=0 cellpadding=0 cellspacing=0 border=0 cellpadding=0 cellspacing=0>
+          <tr>
+            <td style="font-family: -apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.48em; padding-top: 0px; padding-right: 15px; padding-left: 15px;">
+              <p>
+                <span style="font-weight: 600; font-size: 1.2em !important; color: #000;">
+                  <a href="https://golangweekly.com/link/154763/rss" title="logdy.dev" style=" color: #0099b4; font-size: 1.05em;">Logdy: A Web-Based Viewer for Logs</a></span>— Web based real-time log viewer. Stream any content to a web UI with autogenerated filters, then parse any format with TypeScript.
+                <a href="https://golangweekly.com/link/154764/rss" style=" color: #0099b4; ">Live demo.</a></p>
+              <p>Peter Osinski</p>
+            </td>
+          </tr>
+        </table>
+        <table border=0 cellpadding=0 cellspacing=0 border=0 cellpadding=0 cellspacing=0>
+          <tr>
+            <td style="font-family: -apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.48em; padding-top: 0px; padding-right: 15px; padding-left: 15px;">
+              <p>
+                <span style="font-weight: 600; font-size: 1.2em !important; color: #000;">
+                  <a href="https://golangweekly.com/link/154765/rss" title="github.com" style=" color: #0099b4; font-size: 1.05em;">GoWrap: CLI Tool for Generating Decorators for Interfaces</a></span>— Provides a variety of templates to easily add metrics, tracing, fallbacks, pools, and other features into your existing code.</p>
+              <p>Max Chechel</p>
+            </td>
+          </tr>
+        </table>
+        <table border=0 cellpadding=0 cellspacing=0 border=0 cellpadding=0 cellspacing=0>
+          <tr>
+            <td style="font-family: -apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.48em; padding-top: 0px; padding-right: 0px; padding-left: 0px;">
+              <table border=0 cellpadding=0 cellspacing=0 border=0 cellpadding=0 cellspacing=0>
+                <tr>
+                  <td style=" font-family: -apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.48em; "></td>
+                </tr>
+              </table>
+              <table border=0 cellpadding=0 cellspacing=0 border=0 cellpadding=0 cellspacing=0>
+                <tr>
+                  <td style="font-family: -apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.48em; padding-top: 0px; padding-right: 15px; padding-left: 15px;">
+                    <p>📰 Classifieds</p>
+                  </td>
+                </tr>
+              </table>
+              <table border=0 cellpadding=0 cellspacing=0 border=0 cellpadding=0 cellspacing=0>
+                <tr>
+                  <td style="font-family: -apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.48em; padding-top: 0px; padding-right: 15px; padding-left: 15px;">
+                    <p>🐷 Developers for web and mobile applications using Go prefer
+                      <a href="https://golangweekly.com/link/154766/rss" style=" color: #0099b4; font-weight: 500 !important;">Porkbun</a>for domains. Get a .dev, .app, or .foo domain for just $5 from
+                      <a href="https://golangweekly.com/link/154766/rss" style=" color: #0099b4; font-weight: 500 !important;">Porkbun</a>now.</p>
+                    <p>
+                      <em>Frontend Masters</em>has branched out into the Go world with
+                      <a href="https://golangweekly.com/link/154767/rss" style=" color: #0099b4; font-weight: 500 !important;">Build Go Apps That Scale on AWS</a>, a new Go course focused on getting Go apps running on Amazon's platform.</p></td>
+                </tr>
+              </table>
+              <table border=0 cellpadding=0 cellspacing=0 border=0 cellpadding=0 cellspacing=0>
+                <tr>
+                  <td style=" font-family: -apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.48em; "></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+        <table border=0 cellpadding=0 cellspacing=0 border=0 cellpadding=0 cellspacing=0>
+          <tr>
+            <td style=" font-family: -apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.48em; "></td>
+          </tr>
+        </table>
+        <table border=0 cellpadding=0 cellspacing=0 border=0 cellpadding=0 cellspacing=0>
+          <tr>
+            <td style="font-family: -apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.48em; padding-top: 0px; padding-right: 15px; padding-left: 15px;">
+              <ul>
+                <li>
+                  <p>
+                    <a href="https://golangweekly.com/link/154768/rss" style=" color: #0099b4; font-weight: 500 !important; ">gocron 2.5</a>– Run Go functions at pre-determined intervals.</p></li>
+                <li>
+                  <p>
+                    <a href="https://golangweekly.com/link/154769/rss" style=" color: #0099b4; font-weight: 500 !important; ">blake3 1.3</a>– AVX-512 accelerated BLAKE3 hash implementation.</p></li>
+                <li>
+                  <p>
+                    <a href="https://golangweekly.com/link/154770/rss" style=" color: #0099b4; font-weight: 500 !important; ">HaxMap 1.4</a>– Fast, memory efficient concurrent hashmap.</p></li>
+                <li>
+                  <p>
+                    <a href="https://golangweekly.com/link/154771/rss" style=" color: #0099b4; font-weight: 500 !important; ">fzf 0.51</a>– Popular command-line fuzzy finder.</p></li>
+                <li>
+                  <p>
+                    <a href="https://golangweekly.com/link/154772/rss" style=" color: #0099b4; font-weight: 500 !important; ">GoBGP 3.26</a>– BGP implementation in Go.</p></li>
+                <li>
+                  <p>
+                    <a href="https://golangweekly.com/link/154773/rss" style=" color: #0099b4; font-weight: 500 !important; ">Gin 1.10</a>– Popular HTTP web framework.</p></li>
+              </ul>
+            </td>
+          </tr>
+        </table>
+        <table border=0 cellpadding=0 cellspacing=0 border=0 cellpadding=0 cellspacing=0>
+          <tr>
+            <td style=" font-family: -apple-system,BlinkMacSystemFont,Helvetica,sans-serif; font-size: 15px; line-height: 1.48em; "></td>
+          </tr>
+        </table>
+      </div>
+    </td>
+  </tr>
+</table>
+<img src="https://golangweekly.com/open/506/rss" width="1" height="1" />
