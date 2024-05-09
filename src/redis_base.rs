@@ -53,24 +53,35 @@ mod tests {
     fn test_connect_redis() {
         let client = connect_redis("", "", "localhost", 6379);
         if client.is_err() {
-            let clint = client.err().unwrap();
-            eprintln!("{:?}", clint);
+            let err = client.err().unwrap();
+            println!("new redis client error: {:?}", err);
             return;
         }
         assert!(client.is_ok());
         let client = client.unwrap();
-        assert!(client.is_open())
+        let conn = client.get_connection();
+        if conn.is_err() {
+            let err = conn.err().unwrap();
+            println!("new redis connection error: {:?}", err);
+            return;
+        }
+        let conn = conn.unwrap();
+        assert!(conn.is_open())
     }
 
     #[test]
     fn test_setnx_go_weekly() {
         let redis = Redis::new("", "", "localhost", 6379);
         if redis.is_err() {
-            eprintln!("connect redis error");
+            println!("connect redis error");
             return;
         }
         assert!(redis.is_ok());
         let redis = redis.unwrap();
+        if !redis.client.is_open() {
+            println!("connect redis error");
+            return;
+        }
         redis.delete_go_weekly("go_weekly_url1");
         assert!(redis.setnx_go_weekly("go_weekly_url1"));
         assert!(!redis.setnx_go_weekly("go_weekly_url1"));
