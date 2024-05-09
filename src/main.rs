@@ -16,5 +16,5 @@ fn main() -> Result<(), reqwest::Error> {
 }
 
 fn init_logger() {
-    log4rs::init_file("log4rs.yaml", Default::default()).unwrap()
+    log4rs::init_file("log4rs.yml", Default::default()).unwrap()
 }
