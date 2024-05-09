@@ -7,7 +7,7 @@ use scraper::{Html, Selector};
 use serde::Deserialize;
 use serde_json::json;
 
-use crate::feishu_bot;
+use crate::{feishu_bot, redis_base};
 
 const GO_WEEKLY_RSS_URL: &str = "https://cprss.s3.amazonaws.com/golangweekly.com.xml";
 
@@ -58,24 +58,24 @@ impl fmt::Display for Article {
     }
 }
 
-pub async fn send_feishu_msg(webhook: String) -> anyhow::Result<()> {
-    let (rss, articles) = get_rss_articles().await?;
-
+pub async fn send_feishu_msg(redis: &redis_base::Redis, webhook: String) -> anyhow::Result<()> {
+    let (rss, articles) = get_rss_articles(Some(redis)).await?;
     let client = reqwest::Client::new();
-
     for wa in articles {
+        if wa.articles.is_empty() {
+            continue;
+        }
         let res: feishu_bot::SendMessageResp = client
             .post(webhook.clone())
             .json(&json!({
                            "msg_type": "interactive",
                            "card": {
-                               "elements": [{
-                                       "tag": "div",
-                                       "text": {
-                                               "content": build_feishu_content(wa.articles),
-                                               "tag": "lark_md"
-                                       }
-                               }, {
+                               "elements": [
+                                    {
+                                        "tag": "markdown",
+                                        "content": build_feishu_content(wa.articles),
+                                    },
+                                    {
                                        "actions": [{
                                                "tag": "button",
                                                "text": {
@@ -87,7 +87,8 @@ pub async fn send_feishu_msg(webhook: String) -> anyhow::Result<()> {
                                                "value": {}
                                        }],
                                        "tag": "action"
-                               }],
+                                    }
+                               ],
                                "header": {
                                        "title": {
                                                "content": format!("[{}] - {}", rss.channel.title, wa.date.replace("00:00:00 +0000", "")),
@@ -104,6 +105,7 @@ pub async fn send_feishu_msg(webhook: String) -> anyhow::Result<()> {
 
         if res.code != 0 {
             // TODO: log
+            eprintln!("code: {}, msg: {}", res.code, res.msg)
         }
     }
 
@@ -205,14 +207,23 @@ fn trim_str(str: &str) -> String {
     re.replace_all(&str, " ").to_string() // 将匹配到的替换成单个空格
 }
 
-async fn get_rss_articles() -> anyhow::Result<(Rss, Vec<WeeklyArticle>)> {
+async fn get_rss_articles(
+    redis: Option<&redis_base::Redis>,
+) -> anyhow::Result<(Rss, Vec<WeeklyArticle>)> {
     let data = send_request().await?;
     let rss = resolve_xml_data(&data)?;
     let mut articles = vec![];
-
     for item in &rss.channel.item {
-        let arts = resolve_item_description(&item.description);
-        // TODO: filter articles sent before.
+        let arts = resolve_item_description(&item.description)
+            .into_iter()
+            .filter(|item| {
+                if let Some(redis) = redis {
+                    redis.setnx_go_weekly(&item.url)
+                } else {
+                    true
+                }
+            })
+            .collect();
         articles.push(WeeklyArticle {
             date: item.pub_date.clone(),
             articles: arts,
@@ -223,8 +234,11 @@ async fn get_rss_articles() -> anyhow::Result<(Rss, Vec<WeeklyArticle>)> {
 
 fn build_feishu_content(articles: Vec<Article>) -> String {
     let mut content = String::new();
-    for article in articles {
+    for (i, article) in articles.iter().enumerate() {
         content.push_str(format!("{}", article).as_str());
+        if i != articles.len() - 1 {
+            content.push_str("---\n");
+        }
     }
     content
 }
@@ -235,7 +249,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_get_rss_articles() -> anyhow::Result<()> {
-        let (rss, _) = get_rss_articles().await?;
+        let (rss, _) = get_rss_articles(None).await?;
         assert_eq!(rss.channel.title, "Golang Weekly".to_string());
         assert_eq!(
             rss.channel.description,

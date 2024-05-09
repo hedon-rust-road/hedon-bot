@@ -2,6 +2,6 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 pub struct SendMessageResp {
-    pub code: u8,
+    pub code: i64,
     pub msg: String,
 }

@@ -1,5 +1,5 @@
 [package]
-name = "template"
+name = "hedon-bot"
 version = "0.1.0"
 edition = "2021"
 
@@ -8,11 +8,14 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.83"
 quick-xml = { version = "0.31.0", features = ["serde", "serialize"] }
+redis = "0.25.3"
+redis-test = "0.4.0"
 regex = "1.10.4"
 reqwest = { version = "0.12.4", features = ["json"] }
 scraper = "0.19.0"
 serde = { version = "1.0.201", features = ["derive"] }
 serde_json = "1.0.117"
+serde_yml = "0.0.5"
 tokio = { version = "1.37.0", features = ["full"] }
 tracing = "0.1.40"
 tracing-subscriber = "0.3.18"
