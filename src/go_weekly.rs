@@ -1,11 +1,13 @@
 use core::fmt;
 use std::vec;
 
+use log::info;
 use quick_xml::de::from_str;
 use regex::Regex;
 use scraper::{Html, Selector};
 use serde::Deserialize;
 use serde_json::json;
+use tracing::error;
 
 use crate::{feishu_bot, redis_base};
 
@@ -34,7 +36,7 @@ pub struct Item {
     pub pub_date: String,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Article {
     pub url: String,
     pub title: String,
@@ -42,7 +44,7 @@ pub struct Article {
     pub author: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct WeeklyArticle {
     pub date: String,
     pub articles: Vec<Article>,
@@ -52,28 +54,33 @@ impl fmt::Display for Article {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         writeln!(
             f,
-            "**[{}]({})**: {} ({})",
+            "**[{}]({})**: {} (_{}_)",
             self.title, self.url, self.description, self.author
         )
     }
 }
 
-pub async fn send_feishu_msg(redis: &redis_base::Redis, webhook: String) -> anyhow::Result<()> {
+pub async fn send_feishu_msg(
+    redis: &redis_base::Redis,
+    webhooks: Vec<String>,
+) -> anyhow::Result<()> {
+    info!("start fetching go weekly blogs");
     let (rss, articles) = get_rss_articles(Some(redis)).await?;
     let client = reqwest::Client::new();
     for wa in articles {
         if wa.articles.is_empty() {
             continue;
         }
-        let res: feishu_bot::SendMessageResp = client
-            .post(webhook.clone())
+        for webhook in &webhooks {
+            let res: feishu_bot::SendMessageResp = client
+            .post(webhook)
             .json(&json!({
                            "msg_type": "interactive",
                            "card": {
                                "elements": [
                                     {
                                         "tag": "markdown",
-                                        "content": build_feishu_content(wa.articles),
+                                        "content": build_feishu_content(wa.articles.clone()),
                                     },
                                     {
                                        "actions": [{
@@ -103,12 +110,15 @@ pub async fn send_feishu_msg(redis: &redis_base::Redis, webhook: String) -> anyh
             .json()
             .await?;
 
-        if res.code != 0 {
-            // TODO: log
-            eprintln!("code: {}, msg: {}", res.code, res.msg)
+            if res.code != 0 {
+                error!(
+                    "fetch go weekly blogs failed, code: {}, msg: {}",
+                    res.code, res.msg
+                );
+            }
         }
     }
-
+    info!("finish fetching go weekly blogs");
     Ok(())
 }
 
@@ -214,7 +224,7 @@ async fn get_rss_articles(
     let rss = resolve_xml_data(&data)?;
     let mut articles = vec![];
     for item in &rss.channel.item {
-        let arts = resolve_item_description(&item.description)
+        let arts: Vec<Article> = resolve_item_description(&item.description)
             .into_iter()
             .filter(|item| {
                 if let Some(redis) = redis {
@@ -224,10 +234,15 @@ async fn get_rss_articles(
                 }
             })
             .collect();
+        let art_count = arts.len();
         articles.push(WeeklyArticle {
             date: item.pub_date.clone(),
             articles: arts,
         });
+        // Push just one week at once.
+        if art_count > 0 {
+            break;
+        }
     }
     Ok((rss, articles))
 }

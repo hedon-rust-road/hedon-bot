@@ -9,6 +9,7 @@ use serde::Deserialize;
 pub struct Conf {
     pub redis: RedisConf,
     pub webhook: WebHook,
+    pub cron_expression: CronExpression,
 }
 
 #[derive(Debug, Deserialize, PartialEq)]
@@ -19,9 +20,14 @@ pub struct RedisConf {
     pub port: u32,
 }
 
-#[derive(Debug, Deserialize, PartialEq)]
+#[derive(Debug, Deserialize, PartialEq, Clone)]
 pub struct WebHook {
     pub go_weekly: Vec<String>,
+}
+
+#[derive(Debug, Deserialize, PartialEq)]
+pub struct CronExpression {
+    pub go_weekly: String,
 }
 
 impl Conf {
@@ -55,6 +61,9 @@ mod tests {
                         "http://example.com/webhook1".to_string(),
                         "http://example.com/webhook2".to_string()
                     ]
+                },
+                cron_expression: CronExpression {
+                    go_weekly: "0 30 10 * * *".to_string(),
                 }
             }
         )

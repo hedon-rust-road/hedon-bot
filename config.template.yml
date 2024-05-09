@@ -7,3 +7,5 @@ webhook:
   go_weekly:
     - "http://example.com/webhook1"
     - "http://example.com/webhook2"
+cron_expression:
+  go_weekly: "0 30 10 * * *"

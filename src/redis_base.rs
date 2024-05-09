@@ -30,6 +30,8 @@ impl Redis {
         let mut conn = conn.unwrap();
         let _res: Result<i8, RedisError> = conn.hdel(Self::HSET_GO_WEEKLY_KEY, url);
     }
+
+    // TODO: clear the post marker three months ago.
 }
 
 fn connect_redis(username: &str, password: &str, host: &str, mut port: u32) -> RedisResult<Client> {

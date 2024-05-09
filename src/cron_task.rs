@@ -1,25 +1,25 @@
-use std::time::{Duration, SystemTime};
+use std::time::Duration;
 
-use job_scheduler::Job;
+use job_scheduler::{Job, JobScheduler};
+use tokio::runtime::Runtime;
 
-pub fn run_every_10_30pm() {
-    let mut scheduler = job_scheduler::JobScheduler::new();
-    scheduler.add(Job::new("1/5 * * * * *".parse().unwrap(), || {
-        eprintln!("{:?}", SystemTime::now());
-    }));
+use crate::{conf::Conf, go_weekly, redis_base::Redis};
+
+pub fn run_every_10_30pm(redis: &Redis, conf: &Conf) {
+    let mut sched = JobScheduler::new();
+    sched.add(Job::new(
+        conf.cron_expression.go_weekly.parse().unwrap(),
+        || {
+            let rt = Runtime::new().unwrap();
+            let _ = rt.block_on(go_weekly::send_feishu_msg(
+                redis,
+                conf.webhook.go_weekly.clone(),
+            ));
+        },
+    ));
 
     loop {
-        scheduler.tick();
-        std::thread::sleep(Duration::from_millis(500));
+        sched.tick();
+        std::thread::sleep(Duration::from_millis(500)); // 短暂休眠以减少CPU使用率
     }
 }
-
-// #[cfg(test)]
-// mod tests {
-//     use super::run_every_10_30pm;
-
-//     #[test]
-//     fn test_run_every_10_30pm() {
-//         run_every_10_30pm()
-//     }
-// }

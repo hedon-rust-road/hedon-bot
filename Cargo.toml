@@ -8,6 +8,8 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.83"
 job_scheduler = "1.2.1"
+log = "0.4.21"
+log4rs = "1.3.0"
 quick-xml = { version = "0.31.0", features = ["serde", "serialize"] }
 redis = "0.25.3"
 regex = "1.10.4"
