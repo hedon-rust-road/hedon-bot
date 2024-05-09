@@ -7,9 +7,9 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.83"
+job_scheduler = "1.2.1"
 quick-xml = { version = "0.31.0", features = ["serde", "serialize"] }
 redis = "0.25.3"
-redis-test = "0.4.0"
 regex = "1.10.4"
 reqwest = { version = "0.12.4", features = ["json"] }
 scraper = "0.19.0"
