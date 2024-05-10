@@ -25,24 +25,23 @@ Follow these steps to install and set up Hedon-Bot:
 
 3. **Configure Hedon-Bot**
 
-   Copy the `config.template.yml` to `config.yml` and modify it as needed:
-   ```bash
-   cp config.template.yml config.yml
-   ```
+   Copy the `config.template.yml` to `config.yml` and modify it as needed.
 
-4. **Modify the `log4rs.yml` log configuration file as necessary**
+4. **Configure log**
 
+   Modify the `log4rs.yml` log configuration file as needed.
 
 
 ## Configuration (`config.yml`) ⚙️
 
 - **redis**: Configuration for Redis connection. This project uses Redis's `hsetnx` to prevent pushing the same article more than once.
-- **webhook**: Specify the list of webhooks for various channels. Currently supports the `go_weekly` channel, with support for multiple webhooks per channel.
+- **webhooks**: Specify the list of webhooks for various channels. Currently supports the `go_weekly`, with support for multiple webhooks per channel.
 - **cron_expression**: Schedule the frequency of fetching updates for each channel using a cron expression format:
    ```
    sec   min   hour   day of month   month   day of week   year
    *     *     *      *              *       *             *
    ```
+- **once_post_limit**: A limit on the number of articles it can push at a time, default is `5`.
 
 
 

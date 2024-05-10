@@ -20,7 +20,7 @@ pub struct ArticleSourceConfig {
     // webhoos of Feishu robots.
     pub webhooks: Vec<String>,
 
-    // a limit on the number of articles it can push at a time
+    // a limit on the number of articles it can push at a time, default is `5`
     pub once_post_limit: u8,
 }
 
