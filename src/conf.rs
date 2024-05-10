@@ -8,8 +8,20 @@ use serde::Deserialize;
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct Conf {
     pub redis: RedisConf,
-    pub webhook: WebHook,
-    pub cron_expression: CronExpression,
+    pub go_weekly: ArticleSourceConfig,
+}
+
+#[derive(Debug, Clone, Deserialize, PartialEq)]
+pub struct ArticleSourceConfig {
+    // sec   min   hour   day of month   month   day of week   year
+    // *     *     *      *              *       *             *
+    pub cron_expression: String,
+
+    // webhoos of Feishu robots.
+    pub webhooks: Vec<String>,
+
+    // a limit on the number of articles it can push at a time
+    pub once_post_limit: u8,
 }
 
 #[derive(Debug, Deserialize, PartialEq)]
@@ -18,16 +30,6 @@ pub struct RedisConf {
     pub password: String,
     pub host: String,
     pub port: u32,
-}
-
-#[derive(Debug, Deserialize, PartialEq, Clone)]
-pub struct WebHook {
-    pub go_weekly: Vec<String>,
-}
-
-#[derive(Debug, Deserialize, PartialEq)]
-pub struct CronExpression {
-    pub go_weekly: String,
 }
 
 impl Conf {
@@ -56,14 +58,13 @@ mod tests {
                     host: "localhost".to_string(),
                     port: 6379,
                 },
-                webhook: WebHook {
-                    go_weekly: vec![
+                go_weekly: ArticleSourceConfig {
+                    cron_expression: "0 30 10 * * *".to_string(),
+                    webhooks: vec![
                         "http://example.com/webhook1".to_string(),
                         "http://example.com/webhook2".to_string()
-                    ]
-                },
-                cron_expression: CronExpression {
-                    go_weekly: "0 30 10 * * *".to_string(),
+                    ],
+                    once_post_limit: 5,
                 }
             }
         )

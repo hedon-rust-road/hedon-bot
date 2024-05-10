@@ -3,9 +3,9 @@ redis:
   password: "password123"
   host: "localhost"
   port: 6379
-webhook:
-  go_weekly:
+go_weekly:
+  webhooks:
     - "http://example.com/webhook1"
     - "http://example.com/webhook2"
-cron_expression:
-  go_weekly: "0 30 10 * * *"
+  cron_expression: "0 30 10 * * *"
+  once_post_limit: 5

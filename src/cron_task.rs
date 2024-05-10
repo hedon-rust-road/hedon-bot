@@ -7,13 +7,14 @@ use crate::{conf::Conf, go_weekly, redis_base::Redis};
 
 pub fn run_every_10_30pm(redis: &Redis, conf: &Conf) {
     let mut sched = JobScheduler::new();
+    let go_weekly_conf = &conf.go_weekly;
     sched.add(Job::new(
-        conf.cron_expression.go_weekly.parse().unwrap(),
+        go_weekly_conf.cron_expression.parse().unwrap(),
         || {
             let rt = Runtime::new().unwrap();
             let _ = rt.block_on(go_weekly::send_feishu_msg(
                 redis,
-                conf.webhook.go_weekly.clone(),
+                go_weekly_conf.webhooks.clone(),
             ));
         },
     ));
