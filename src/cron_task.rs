@@ -15,6 +15,7 @@ pub fn run_every_10_30pm(redis: &Redis, conf: &Conf) {
             let _ = rt.block_on(go_weekly::send_feishu_msg(
                 redis,
                 go_weekly_conf.webhooks.clone(),
+                go_weekly_conf.once_post_limit,
             ));
         },
     ));

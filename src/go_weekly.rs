@@ -63,9 +63,10 @@ impl fmt::Display for Article {
 pub async fn send_feishu_msg(
     redis: &redis_base::Redis,
     webhooks: Vec<String>,
+    once_post_limit: u8,
 ) -> anyhow::Result<()> {
     info!("start fetching go weekly blogs");
-    let (rss, articles) = get_rss_articles(Some(redis)).await?;
+    let (rss, articles) = get_rss_articles(Some(redis), once_post_limit).await?;
     let client = reqwest::Client::new();
     for wa in articles {
         if wa.articles.is_empty() {
@@ -219,7 +220,12 @@ fn trim_str(str: &str) -> String {
 
 async fn get_rss_articles(
     redis: Option<&redis_base::Redis>,
+    mut once_post_limit: u8,
 ) -> anyhow::Result<(Rss, Vec<WeeklyArticle>)> {
+    const DEFAULT_ONCE_POST_LIMIT: u8 = 5;
+    if once_post_limit == 0 {
+        once_post_limit = DEFAULT_ONCE_POST_LIMIT
+    }
     let data = send_request().await?;
     let rss = resolve_xml_data(&data)?;
     let mut articles = vec![];
@@ -231,6 +237,14 @@ async fn get_rss_articles(
                     redis.setnx_go_weekly(&item.url)
                 } else {
                     true
+                }
+            })
+            .take_while(|_| {
+                if once_post_limit > 0 {
+                    once_post_limit -= 1;
+                    true
+                } else {
+                    false
                 }
             })
             .collect();
@@ -264,7 +278,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_get_rss_articles() -> anyhow::Result<()> {
-        let (rss, _) = get_rss_articles(None).await?;
+        let (rss, _) = get_rss_articles(None, 0).await?;
         assert_eq!(rss.channel.title, "Golang Weekly".to_string());
         assert_eq!(
             rss.channel.description,
