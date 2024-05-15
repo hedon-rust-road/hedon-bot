@@ -1,5 +1,6 @@
 use regex::Regex;
 
+pub mod chatgpt;
 pub mod conf;
 pub mod cron_task;
 pub mod feishu_bot;
