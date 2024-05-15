@@ -5,30 +5,31 @@ pub struct Redis {
 }
 
 impl Redis {
-    const HSET_GO_WEEKLY_KEY: &'static str = "hedon-bot:go-weekly-memory";
+    pub const HSET_GO_WEEKLY_KEY: &'static str = "hedon-bot:go-weekly-memory";
+    pub const HSET_REDIS_BLOG_KEY: &'static str = "hedon-bot:redis-blog-memory";
 
     pub fn new(username: &str, password: &str, host: &str, port: u32) -> anyhow::Result<Redis> {
         let client = connect_redis(username, password, host, port)?;
         Ok(Redis { client })
     }
 
-    pub fn setnx_go_weekly(&self, url: &str) -> bool {
+    pub fn setnx(&self, key: &str, url: &str) -> bool {
         let conn = self.client.get_connection();
         if conn.is_err() {
             return true;
         }
         let mut conn = conn.unwrap();
-        let res: Result<bool, RedisError> = conn.hset_nx(Self::HSET_GO_WEEKLY_KEY, url, "1");
+        let res: Result<bool, RedisError> = conn.hset_nx(key, url, "1");
         res.unwrap_or(true)
     }
 
-    pub fn delete_go_weekly(&self, url: &str) {
+    pub fn delete(&self, key: &str, url: &str) {
         let conn = self.client.get_connection();
         if conn.is_err() {
             return;
         }
         let mut conn = conn.unwrap();
-        let _res: Result<i8, RedisError> = conn.hdel(Self::HSET_GO_WEEKLY_KEY, url);
+        let _res: Result<i8, RedisError> = conn.hdel(key, url);
     }
 
     // TODO: clear the post marker three months ago.
@@ -70,7 +71,7 @@ mod tests {
     }
 
     #[test]
-    fn test_setnx_go_weekly() {
+    fn test_setnx() {
         let redis = Redis::new("", "", "localhost", 6379);
         if redis.is_err() {
             println!("connect redis error");
@@ -82,8 +83,8 @@ mod tests {
             println!("connect redis error");
             return;
         }
-        redis.delete_go_weekly("go_weekly_url1");
-        assert!(redis.setnx_go_weekly("go_weekly_url1"));
-        assert!(!redis.setnx_go_weekly("go_weekly_url1"));
+        redis.delete(Redis::HSET_GO_WEEKLY_KEY, "go_weekly_url1");
+        assert!(redis.setnx(Redis::HSET_GO_WEEKLY_KEY, "go_weekly_url1"));
+        assert!(!redis.setnx(Redis::HSET_GO_WEEKLY_KEY, "go_weekly_url1"));
     }
 }

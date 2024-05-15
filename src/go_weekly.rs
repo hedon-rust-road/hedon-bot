@@ -1,40 +1,19 @@
+use crate::{
+    redis_base::Redis,
+    rss::{resolve_xml_data, send_request, Rss, DEFAULT_ONCE_POST_LIMIT},
+    trim_str,
+};
 use core::fmt;
 use std::vec;
 
 use log::info;
-use quick_xml::de::from_str;
-use regex::Regex;
 use scraper::{Html, Selector};
-use serde::Deserialize;
 use serde_json::json;
 use tracing::error;
 
 use crate::{feishu_bot, redis_base};
 
 const GO_WEEKLY_RSS_URL: &str = "https://cprss.s3.amazonaws.com/golangweekly.com.xml";
-
-#[derive(Debug, Deserialize)]
-pub struct Rss {
-    pub channel: Channel,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct Channel {
-    pub title: String,
-    pub description: String,
-    pub link: String,
-    pub item: Vec<Item>,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct Item {
-    pub title: String,
-    pub link: String,
-    pub description: String,
-    pub guid: String,
-    #[serde(rename = "pubDate")]
-    pub pub_date: String,
-}
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Article {
@@ -123,17 +102,6 @@ pub async fn send_feishu_msg(
     Ok(())
 }
 
-async fn send_request() -> Result<String, reqwest::Error> {
-    let client = reqwest::Client::new();
-    let resp = client.get(GO_WEEKLY_RSS_URL).send().await?.text().await?;
-    Ok(resp)
-}
-
-fn resolve_xml_data(data: &str) -> Result<Rss, quick_xml::DeError> {
-    let rss: Rss = from_str(data)?;
-    Ok(rss)
-}
-
 fn resolve_item_description(desc: &str) -> Vec<Article> {
     let mut res = vec![];
     let document = Html::parse_document(desc);
@@ -212,29 +180,22 @@ fn resolve_item_description(desc: &str) -> Vec<Article> {
     res
 }
 
-fn trim_str(str: &str) -> String {
-    let str = str.trim().replace(['\t', '\n'], " ");
-    let re = Regex::new(r"\s+").unwrap(); // 匹配一个或多个空白字符
-    re.replace_all(&str, " ").to_string() // 将匹配到的替换成单个空格
-}
-
 async fn get_rss_articles(
     redis: Option<&redis_base::Redis>,
     mut once_post_limit: u8,
 ) -> anyhow::Result<(Rss, Vec<WeeklyArticle>)> {
-    const DEFAULT_ONCE_POST_LIMIT: u8 = 5;
     if once_post_limit == 0 {
         once_post_limit = DEFAULT_ONCE_POST_LIMIT
     }
-    let data = send_request().await?;
+    let data = send_request(GO_WEEKLY_RSS_URL).await?;
     let rss = resolve_xml_data(&data)?;
     let mut articles = vec![];
-    for item in &rss.channel.item {
+    for item in &rss.channel.items {
         let arts: Vec<Article> = resolve_item_description(&item.description)
             .into_iter()
             .filter(|item| {
                 if let Some(redis) = redis {
-                    redis.setnx_go_weekly(&item.url)
+                    redis.setnx(Redis::HSET_GO_WEEKLY_KEY, &item.url)
                 } else {
                     true
                 }
@@ -284,7 +245,6 @@ mod tests {
             rss.channel.description,
             "A weekly newsletter about the Go programming language".to_string()
         );
-        assert_eq!(rss.channel.link, "https://golangweekly.com/".to_string());
         Ok(())
     }
 
@@ -311,45 +271,5 @@ mod tests {
                 author: "Peter Osinski".to_string(),
             }
         );
-    }
-}
-
-#[cfg(test)]
-mod test_trim_str {
-    use super::*;
-
-    #[test]
-    fn test_empty_string() {
-        assert_eq!(trim_str(""), "");
-    }
-
-    #[test]
-    fn test_only_whitespace() {
-        assert_eq!(trim_str(" \t\n \t"), "");
-    }
-
-    #[test]
-    fn test_leading_and_trailing_whitespace() {
-        assert_eq!(trim_str(" \t\n Hello, World! \n\t "), "Hello, World!");
-    }
-
-    #[test]
-    fn test_consecutive_spaces() {
-        assert_eq!(trim_str("Hello    World!"), "Hello World!");
-    }
-
-    #[test]
-    fn test_mixed_whitespace() {
-        assert_eq!(trim_str("Hello \t\n  World!\n"), "Hello World!");
-    }
-
-    #[test]
-    fn test_no_whitespace() {
-        assert_eq!(trim_str("HelloWorld!"), "HelloWorld!");
-    }
-
-    #[test]
-    fn test_unicode_characters() {
-        assert_eq!(trim_str("   Привет\tмир  \n"), "Привет мир");
     }
 }
