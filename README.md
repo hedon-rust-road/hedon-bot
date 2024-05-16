@@ -10,7 +10,10 @@ Hedon Bot is a Feishu bot designed to send scheduled updates on the latest news 
 - Periodically fetches articles from [Redis Official Blog](https://redis.io/blog/) and sends updates to designated Feishu groups via the bot.
 - Uses ChatGPT to summarize the article content.
 
+## Used Rss Feeds
 
+- [Golang Weekly](https://cprss.s3.amazonaws.com/golangweekly.com.xml)
+- [Redis Official Blog](https://redis.io/blog/feed/)
 
 ## Installation 🔧
 
