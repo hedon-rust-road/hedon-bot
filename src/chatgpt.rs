@@ -1,4 +1,5 @@
 use anyhow::anyhow;
+use reqwest::{Client, Proxy};
 use serde::{Deserialize, Serialize};
 use tracing::error;
 
@@ -42,8 +43,18 @@ impl Req {
     }
 }
 
-pub async fn send_request(req: Req, key: impl Into<String>) -> Result<Resp, anyhow::Error> {
-    let client = reqwest::Client::new();
+pub async fn send_request(
+    req: Req,
+    key: impl Into<String>,
+    proxy: Option<impl Into<String>>,
+) -> Result<Resp, anyhow::Error> {
+    let client: Client;
+    if let Some(proxy) = proxy {
+        let proxy = Proxy::https(proxy.into())?;
+        client = Client::builder().proxy(proxy).build()?;
+    } else {
+        client = reqwest::Client::new();
+    }
     let resp = client
         .post("https://api.openai.com/v1/chat/completions")
         .header("Content-Type", "application/json")

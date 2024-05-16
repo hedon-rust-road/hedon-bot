@@ -29,13 +29,14 @@ pub async fn send_feishu_msg(
     webhooks: Vec<String>,
     once_post_limit: u8,
     openai_api_key: Option<&str>,
+    proxy: Option<String>,
 ) -> anyhow::Result<()> {
     info!("start fetching redis official blogs");
     let (_, articles) = get_rss_articles(Some(redis), once_post_limit).await?;
     let client = reqwest::Client::new();
     for article in articles {
         thread::sleep(Duration::from_secs(3));
-        let content = build_feishu_content(openai_api_key, &article).await;
+        let content = build_feishu_content(openai_api_key, proxy.clone(), &article).await;
         let req = &json!({
                     "msg_type": "interactive",
                     "card": {
@@ -124,7 +125,11 @@ pub async fn get_rss_articles(
     Ok((rss, articles))
 }
 
-async fn build_feishu_content(openai_api_key: Option<&str>, article: &Article) -> String {
+async fn build_feishu_content(
+    openai_api_key: Option<&str>,
+    proxy: Option<String>,
+    article: &Article,
+) -> String {
     if openai_api_key.is_none() {
         return article.description.to_string();
     }
@@ -135,7 +140,7 @@ async fn build_feishu_content(openai_api_key: Option<&str>, article: &Article) -
     res.push_str("\n---\n");
     res.push_str("\n**以下内容为 OpenAI 生成，仅供参考：**\n\n");
     let req = Req::new("gpt-4o", build_req_content(&article.content));
-    let resp = chatgpt::send_request(req, openai_api_key).await;
+    let resp = chatgpt::send_request(req, openai_api_key, proxy).await;
     match resp {
         Err(e) => res.push_str(e.to_string().as_str()),
         Ok(v) => {
