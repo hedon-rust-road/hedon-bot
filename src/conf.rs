@@ -7,8 +7,10 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct Conf {
+    pub openai_api_key: String,
     pub redis: RedisConf,
     pub go_weekly: ArticleSourceConfig,
+    pub redis_official_blog: ArticleSourceConfig,
 }
 
 #[derive(Debug, Clone, Deserialize, PartialEq)]
@@ -52,6 +54,7 @@ mod tests {
         assert_eq!(
             conf,
             Conf {
+                openai_api_key: "xxx".to_string(),
                 redis: RedisConf {
                     username: "user".to_string(),
                     password: "password123".to_string(),
@@ -65,6 +68,14 @@ mod tests {
                         "http://example.com/webhook2".to_string()
                     ],
                     once_post_limit: 5,
+                },
+                redis_official_blog: ArticleSourceConfig {
+                    cron_expression: "0 30 10 * * *".to_string(),
+                    webhooks: vec![
+                        "http://example.com/webhook1".to_string(),
+                        "http://example.com/webhook2".to_string()
+                    ],
+                    once_post_limit: 1,
                 }
             }
         )

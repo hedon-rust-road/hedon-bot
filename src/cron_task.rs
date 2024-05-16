@@ -3,7 +3,7 @@ use std::time::Duration;
 use job_scheduler::{Job, JobScheduler};
 use tokio::runtime::Runtime;
 
-use crate::{conf::Conf, go_weekly, redis_base::Redis};
+use crate::{conf::Conf, go_weekly, redis_base::Redis, redis_blog};
 
 pub fn run_every_10_30pm(redis: &Redis, conf: &Conf) {
     let mut sched = JobScheduler::new();
@@ -16,6 +16,20 @@ pub fn run_every_10_30pm(redis: &Redis, conf: &Conf) {
                 redis,
                 go_weekly_conf.webhooks.clone(),
                 go_weekly_conf.once_post_limit,
+            ));
+        },
+    ));
+
+    let redis_official_blog_conf = &conf.redis_official_blog;
+    sched.add(Job::new(
+        redis_official_blog_conf.cron_expression.parse().unwrap(),
+        || {
+            let rt = Runtime::new().unwrap();
+            let _ = rt.block_on(redis_blog::send_feishu_msg(
+                redis,
+                redis_official_blog_conf.webhooks.clone(),
+                redis_official_blog_conf.once_post_limit,
+                Some(&conf.openai_api_key),
             ));
         },
     ));

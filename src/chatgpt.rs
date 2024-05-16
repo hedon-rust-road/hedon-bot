@@ -1,4 +1,6 @@
+use anyhow::anyhow;
 use serde::{Deserialize, Serialize};
+use tracing::error;
 
 #[derive(Debug, Serialize)]
 pub struct Req {
@@ -7,6 +9,7 @@ pub struct Req {
 }
 
 #[derive(Debug, Deserialize, Default)]
+#[serde(default)]
 pub struct Resp {
     pub id: String,
     pub object: String,
@@ -39,29 +42,39 @@ impl Req {
     }
 }
 
-pub async fn send_request(req: &Req, key: impl Into<String>) -> Result<Resp, anyhow::Error> {
+pub async fn send_request(req: Req, key: impl Into<String>) -> Result<Resp, anyhow::Error> {
     let client = reqwest::Client::new();
-    let resp: Resp = client
+    let resp = client
         .post("https://api.openai.com/v1/chat/completions")
         .header("Content-Type", "application/json")
         .header("Authorization", format!("Bearer {}", key.into()))
-        .json(req)
+        .json(&req)
         .send()
-        .await?
-        .json()
         .await?;
-    Ok(resp)
+
+    if resp.status().is_success() {
+        let resp: Resp = resp.json().await?;
+        Ok(resp)
+    } else {
+        let status = resp.status();
+        let error_text = resp
+            .text()
+            .await
+            .unwrap_or_else(|_| "Failed to read response body".to_string());
+        error!(
+            "Request failed with status: {} and body: {}",
+            status, error_text
+        );
+        Err(anyhow!("{}: {}", status, error_text))
+    }
 }
 
-// #[cfg(test)]
-// mod tests {
-
-//     use super::*;
-
-//     #[tokio::test]
-//     async fn test_send_request() -> anyhow::Result<()> {
-//         let resp = send_request(&Req::new("gpt-3.5-turbo", "什么是Rust?"), "xxx").await?;
-//         println!("{:?}", resp.choices[0].message.content);
-//         Ok(())
-//     }
-// }
+pub fn build_req_content(content: &str) -> String {
+    let mut res = String::with_capacity(content.len() + 128);
+    res.push_str("这事一篇文章的详细内容：\n");
+    res.push_str(content);
+    res.push('\n');
+    res.push_str("请你使用中文对文章进行总结概括，不要超过150个字。\n");
+    res.push_str("如果文中有列出参考链接的话，也请你整理并放置在回复的最下面。");
+    res
+}
