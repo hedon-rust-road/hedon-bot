@@ -59,7 +59,7 @@ Follow these steps to install and set up Hedon-Bot:
 
 
 
-## Core Frameworks and Libraries 📚
+## Core Crates 📚
 
 - **job_scheduler**: For scheduling tasks.
 - **log4rs**: Logging library.
