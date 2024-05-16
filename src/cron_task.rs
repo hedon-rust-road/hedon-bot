@@ -29,7 +29,7 @@ pub fn run_every_10_30pm(redis: &Redis, conf: &Conf) {
                 redis,
                 redis_official_blog_conf.webhooks.clone(),
                 redis_official_blog_conf.once_post_limit,
-                Some(&conf.openai_api_key),
+                conf.openai_api_key.clone(),
                 conf.proxy.clone(),
             ));
         },

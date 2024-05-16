@@ -7,7 +7,7 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct Conf {
-    pub openai_api_key: String,
+    pub openai_api_key: Option<String>,
     pub proxy: Option<String>,
     pub redis: RedisConf,
     pub go_weekly: ArticleSourceConfig,
@@ -55,7 +55,7 @@ mod tests {
         assert_eq!(
             conf,
             Conf {
-                openai_api_key: "xxx".to_string(),
+                openai_api_key: Some("xxx".to_string()),
                 proxy: Some("http://127.0.0.1:7890".to_string()),
                 redis: RedisConf {
                     username: "user".to_string(),
