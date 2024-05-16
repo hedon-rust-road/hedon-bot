@@ -105,19 +105,19 @@ pub async fn get_rss_articles(
             content: trim_str(&v.content),
             date: v.pub_date.to_string(),
         })
+        .filter(|v| {
+            if let Some(r) = redis {
+                r.setnx(Redis::HSET_REDIS_BLOG_KEY, &v.url)
+            } else {
+                true
+            }
+        })
         .take_while(|_| {
             if once_post_limit > 0 {
                 once_post_limit -= 1;
                 true
             } else {
                 false
-            }
-        })
-        .filter(|v| {
-            if let Some(r) = redis {
-                r.setnx(Redis::HSET_REDIS_BLOG_KEY, &v.url)
-            } else {
-                true
             }
         })
         .collect();
