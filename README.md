@@ -36,6 +36,13 @@ Follow these steps to install and set up Hedon-Bot:
 
    Modify the `log4rs.yml` log configuration file as needed.
 
+5. **Run Hedon-Bot in the background**
+   ```bash
+   hedon-bot&
+   ```
+   Make sure `config.yml` and `log4rs.yml` are in the current directory (command line arguments specifying the configuration file path will be supported later. Please look forward ~)
+
+
 
 ## Configuration (`config.yml`) ⚙️
 
