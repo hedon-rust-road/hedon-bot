@@ -10,8 +10,8 @@ appenders:
     policy:
       kind: compound
       trigger:
-        kind: date
-        schedule: "0 0 0 * * *"  # 每天午夜触发
+        kind: size
+        limit: 10485760  # 10 MB
       roller:
         kind: fixed_window
         pattern: "logs/info.{}.log"
@@ -25,8 +25,8 @@ appenders:
     policy:
       kind: compound
       trigger:
-        kind: date
-        schedule: "0 0 0 * * *"  # 每天午夜触发
+        kind: size
+        limit: 10485760  # 10 MB
       roller:
         kind: fixed_window
         pattern: "logs/error.{}.log"
