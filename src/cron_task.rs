@@ -16,6 +16,8 @@ pub fn run_every_10_30pm(redis: &Redis, conf: &Conf) {
                 redis,
                 go_weekly_conf.webhooks.clone(),
                 go_weekly_conf.once_post_limit,
+                conf.openai_api_key.clone(),
+                conf.proxy.clone(),
             ));
         },
     ));

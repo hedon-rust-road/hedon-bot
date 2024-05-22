@@ -80,12 +80,31 @@ pub async fn send_request(
     }
 }
 
-pub fn build_req_content(content: &str) -> String {
-    let mut res = String::with_capacity(content.len() + 128);
-    res.push_str("这事一篇文章的详细内容：\n");
-    res.push_str(content);
-    res.push('\n');
-    res.push_str("请你使用中文对文章进行总结概括，不要超过150个字。\n");
-    res.push_str("如果文中有列出参考链接的话，也请你整理并放置在回复的最下面。");
-    res
+pub async fn build_feishu_content(
+    openai_api_key: Option<String>,
+    proxy: Option<String>,
+    content: String,
+) -> String {
+    if openai_api_key.is_none() {
+        return "".to_string();
+    }
+
+    let openai_api_key = openai_api_key.unwrap();
+    let mut res = String::with_capacity(4096);
+    res.push_str("\n---\n");
+    res.push_str("\n**以下内容为 OpenAI 生成，仅供参考：**\n\n");
+    let req = Req::new("gpt-4o", content);
+    let resp = send_request(req, openai_api_key, proxy).await;
+    match resp {
+        Err(e) => res.push_str(e.to_string().as_str()),
+        Ok(v) => {
+            if v.choices.is_empty() {
+                res.push_str(format!("{:#?}", v).as_str())
+            } else {
+                res.push_str(&v.choices[0].message.content);
+            }
+        }
+    }
+    res.push_str("\n---\n");
+    res.to_string()
 }

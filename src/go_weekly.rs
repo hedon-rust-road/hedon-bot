@@ -1,4 +1,5 @@
 use crate::{
+    chatgpt::build_feishu_content,
     redis_base::Redis,
     rss::{resolve_xml_data, send_request, Rss, DEFAULT_ONCE_POST_LIMIT},
     trim_str,
@@ -43,6 +44,8 @@ pub async fn send_feishu_msg(
     redis: &redis_base::Redis,
     webhooks: Vec<String>,
     once_post_limit: u8,
+    openai_api_key: Option<String>,
+    proxy: Option<String>,
 ) -> anyhow::Result<()> {
     info!("start fetching go weekly blogs");
     let (rss, articles) = get_rss_articles(Some(redis), once_post_limit).await?;
@@ -51,6 +54,7 @@ pub async fn send_feishu_msg(
         if wa.articles.is_empty() {
             continue;
         }
+        let content = build_content(wa.articles, openai_api_key.clone(), proxy.clone()).await;
         for webhook in &webhooks {
             let res: feishu_bot::SendMessageResp = client
             .post(webhook)
@@ -60,7 +64,7 @@ pub async fn send_feishu_msg(
                                "elements": [
                                     {
                                         "tag": "markdown",
-                                        "content": build_feishu_content(wa.articles.clone()),
+                                        "content": content,
                                     },
                                     {
                                        "actions": [{
@@ -222,7 +226,11 @@ async fn get_rss_articles(
     Ok((rss, articles))
 }
 
-fn build_feishu_content(articles: Vec<Article>) -> String {
+async fn build_content(
+    articles: Vec<Article>,
+    openai_api_key: Option<String>,
+    proxy: Option<String>,
+) -> String {
     let mut content = String::new();
     for (i, article) in articles.iter().enumerate() {
         content.push_str(format!("{}", article).as_str());
@@ -230,7 +238,18 @@ fn build_feishu_content(articles: Vec<Article>) -> String {
             content.push_str("---\n");
         }
     }
+    let c = build_feishu_content(openai_api_key, proxy, build_req_content(content.clone())).await;
+    content.push_str(&c);
     content
+}
+
+fn build_req_content(content: String) -> String {
+    let mut res = String::with_capacity(content.len() + 128);
+    res.push_str("这是 go weekly 本周的重点文章\n");
+    res.push_str(&content);
+    res.push('\n');
+    res.push_str("请你使用中文每篇文章进行总结概括，不要超过100个字。\n");
+    res
 }
 
 #[cfg(test)]
