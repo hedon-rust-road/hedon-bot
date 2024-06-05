@@ -1,15 +1,10 @@
 use std::sync::Arc;
 
 use hedon_bot::{conf::Conf, cron_task, redis_base};
-use log::{info, warn};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     init_logger();
-
-    warn!("warn");
-    info!("info");
-
     let conf = Conf::load("config.yml").unwrap();
     let redis = redis_base::Redis::new(
         &conf.redis.username,
