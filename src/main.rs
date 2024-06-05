@@ -1,6 +1,9 @@
+use std::sync::Arc;
+
 use hedon_bot::{conf::Conf, cron_task, redis_base};
 
-fn main() -> Result<(), reqwest::Error> {
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
     init_logger();
 
     let conf = Conf::load("config.yml").unwrap();
@@ -11,7 +14,10 @@ fn main() -> Result<(), reqwest::Error> {
         conf.redis.port,
     )
     .unwrap();
-    cron_task::run_every_10_30pm(&redis, &conf);
+
+    let redis = Arc::new(redis);
+    let conf = Arc::new(conf);
+    cron_task::run_every_10_30pm(redis, conf).await?;
     Ok(())
 }
 

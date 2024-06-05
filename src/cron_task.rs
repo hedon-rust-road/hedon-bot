@@ -1,51 +1,77 @@
-use std::time::Duration;
-
-use job_scheduler::{Job, JobScheduler};
-use log::info;
-use tokio::runtime::Runtime;
+use log::{error, info};
+use std::sync::Arc;
+use tokio_cron_scheduler::{Job, JobScheduler};
 
 use crate::{conf::Conf, go_weekly, redis_base::Redis, redis_blog};
 
-pub fn run_every_10_30pm(redis: &Redis, conf: &Conf) {
-    let mut sched = JobScheduler::new();
-    let go_weekly_conf = &conf.go_weekly;
-    sched.add(Job::new(
-        go_weekly_conf.cron_expression.parse().unwrap(),
-        || {
-            info!("Run go_weekly");
-            let rt = Runtime::new().unwrap();
-            let _ = rt.block_on(go_weekly::send_feishu_msg(
-                redis,
-                go_weekly_conf.webhooks.clone(),
-                go_weekly_conf.once_post_limit,
-                conf.openai_api_key.clone(),
-                conf.proxy.clone(),
-            ));
-        },
-    ));
+pub async fn run_every_10_30pm(redis: Arc<Redis>, conf: Arc<Conf>) -> anyhow::Result<()> {
+    let sched = JobScheduler::new().await?;
 
+    let go_weekly_conf = Arc::new(conf.go_weekly.clone());
+    let go_weekly_job = Job::new_async(go_weekly_conf.cron_expression.as_str(), {
+        let redis = Arc::clone(&redis);
+        let conf = Arc::clone(&conf);
+        let go_weekly_conf = Arc::clone(&go_weekly_conf);
+        move |uuid, mut l| {
+            let redis = Arc::clone(&redis);
+            let conf = Arc::clone(&conf);
+            let go_weekly_conf = Arc::clone(&go_weekly_conf);
+            Box::pin(async move {
+                if let Ok(Some(ts)) = l.next_tick_for_job(uuid).await {
+                    info!("Run go_weekly {}", ts);
+                    if let Err(e) = go_weekly::send_feishu_msg(
+                        &redis,
+                        go_weekly_conf.webhooks.clone(),
+                        go_weekly_conf.once_post_limit,
+                        conf.openai_api_key.clone(),
+                        conf.proxy.clone(),
+                    )
+                    .await
+                    {
+                        error!("go_weekly error: {:?}", e);
+                    }
+                }
+            })
+        }
+    })?;
+
+    sched.add(go_weekly_job).await?;
     info!("add go_weekly job");
 
-    let redis_official_blog_conf = &conf.redis_official_blog;
-    sched.add(Job::new(
-        redis_official_blog_conf.cron_expression.parse().unwrap(),
-        || {
-            info!("Run redis_official_blog");
-            let rt = Runtime::new().unwrap();
-            let _ = rt.block_on(redis_blog::send_feishu_msg(
-                redis,
-                redis_official_blog_conf.webhooks.clone(),
-                redis_official_blog_conf.once_post_limit,
-                conf.openai_api_key.clone(),
-                conf.proxy.clone(),
-            ));
-        },
-    ));
-
+    let redis_official_blog_conf = Arc::new(conf.redis_official_blog.clone());
+    let redis_job = Job::new_async(redis_official_blog_conf.cron_expression.as_str(), {
+        let redis = Arc::clone(&redis);
+        let conf = Arc::clone(&conf);
+        let redis_official_blog_conf = Arc::clone(&redis_official_blog_conf);
+        move |uuid, mut l| {
+            let redis = Arc::clone(&redis);
+            let conf = Arc::clone(&conf);
+            let redis_official_blog_conf = Arc::clone(&redis_official_blog_conf);
+            Box::pin(async move {
+                if let Ok(Some(ts)) = l.next_tick_for_job(uuid).await {
+                    info!("Run redis_official_blog {}", ts);
+                    if let Err(e) = redis_blog::send_feishu_msg(
+                        &redis,
+                        redis_official_blog_conf.webhooks.clone(),
+                        redis_official_blog_conf.once_post_limit,
+                        conf.openai_api_key.clone(),
+                        conf.proxy.clone(),
+                    )
+                    .await
+                    {
+                        error!("redis_official_blog error: {:?}", e);
+                    }
+                }
+            })
+        }
+    })?;
+    sched.add(redis_job).await?;
     info!("add redis_official_blog job");
 
+    sched.start().await?;
+    info!("start scheduler");
+
     loop {
-        sched.tick();
-        std::thread::sleep(Duration::from_millis(500)); // 短暂休眠以减少CPU使用率
+        tokio::time::sleep(tokio::time::Duration::from_micros(500)).await;
     }
 }
