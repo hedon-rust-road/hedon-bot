@@ -1,7 +1,7 @@
 use anyhow::anyhow;
+use log::warn;
 use reqwest::{Client, Proxy};
 use serde::{Deserialize, Serialize};
-use tracing::error;
 
 #[derive(Debug, Serialize)]
 pub struct Req {
@@ -72,7 +72,7 @@ pub async fn send_request(
             .text()
             .await
             .unwrap_or_else(|_| "Failed to read response body".to_string());
-        error!(
+        warn!(
             "Request failed with status: {} and body: {}",
             status, error_text
         );

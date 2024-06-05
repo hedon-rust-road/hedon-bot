@@ -1,4 +1,4 @@
-use log::{error, info};
+use log::{info, warn};
 use std::sync::Arc;
 use tokio_cron_scheduler::{Job, JobScheduler};
 
@@ -28,7 +28,7 @@ pub async fn run_every_10_30pm(redis: Arc<Redis>, conf: Arc<Conf>) -> anyhow::Re
                     )
                     .await
                     {
-                        error!("go_weekly error: {:?}", e);
+                        warn!("go_weekly error: {:?}", e);
                     }
                 }
             })
@@ -59,7 +59,7 @@ pub async fn run_every_10_30pm(redis: Arc<Redis>, conf: Arc<Conf>) -> anyhow::Re
                     )
                     .await
                     {
-                        error!("redis_official_blog error: {:?}", e);
+                        warn!("redis_official_blog error: {:?}", e);
                     }
                 }
             })
