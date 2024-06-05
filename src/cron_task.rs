@@ -24,6 +24,8 @@ pub fn run_every_10_30pm(redis: &Redis, conf: &Conf) {
         },
     ));
 
+    info!("add go_weekly job");
+
     let redis_official_blog_conf = &conf.redis_official_blog;
     sched.add(Job::new(
         redis_official_blog_conf.cron_expression.parse().unwrap(),
@@ -39,6 +41,8 @@ pub fn run_every_10_30pm(redis: &Redis, conf: &Conf) {
             ));
         },
     ));
+
+    info!("add redis_official_blog job");
 
     loop {
         sched.tick();
