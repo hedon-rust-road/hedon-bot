@@ -47,6 +47,7 @@ Follow these steps to install and set up Hedon-Bot:
 ## Configuration (`config.yml`) ⚙️
 
 - **openai_api_key**: The api key to invoke OpenAI api (optional), you can get it from `https://platform.openai.com/api-keys`.
+- **openai_host**: The OpenAI api host (optional), if your server environment or area does not support access to the openai website, you need to configure it.
 - **proxy**: The proxy address (optional), used for proxy access to the Open API, if your server environment does not support access to the corresponding website, you need to configure it.
 - **redis**: Configuration for Redis connection. This project uses Redis's `hsetnx` to prevent pushing the same article more than once.
 - **webhooks**: Specify the list of webhooks for various channels. Currently supports the `go_weekly` and `redis_official_blog`, with support for multiple webhooks per channel.
