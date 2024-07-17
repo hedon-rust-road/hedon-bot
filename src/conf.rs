@@ -8,6 +8,7 @@ use serde::Deserialize;
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct Conf {
     pub openai_api_key: Option<String>,
+    pub openai_host: Option<String>,
     pub proxy: Option<String>,
     pub redis: RedisConf,
     pub go_weekly: ArticleSourceConfig,
@@ -56,6 +57,7 @@ mod tests {
             conf,
             Conf {
                 openai_api_key: Some("xxx".to_string()),
+                openai_host: Some("xx".to_string()),
                 proxy: Some("http://127.0.0.1:7890".to_string()),
                 redis: RedisConf {
                     username: "user".to_string(),

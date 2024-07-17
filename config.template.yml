@@ -1,5 +1,6 @@
-openai_api_key: "xxx"
-proxy: "http://127.0.0.1:7890"
+openai_api_key: "xxx" # optional
+openai_host: "xx"  # optional
+proxy: "http://127.0.0.1:7890"  # optional
 redis:
   username: "user"
   password: "password123"

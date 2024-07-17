@@ -46,6 +46,7 @@ impl Req {
 pub async fn send_request(
     req: Req,
     key: impl Into<String>,
+    host: Option<impl Into<String>>,
     proxy: Option<impl Into<String>>,
 ) -> Result<Resp, anyhow::Error> {
     let client: Client;
@@ -55,8 +56,12 @@ pub async fn send_request(
     } else {
         client = reqwest::Client::new();
     }
+    let host = match host {
+        Some(h) => h.into(),
+        None => "https://api.openai.com".to_string(),
+    };
     let resp = client
-        .post("https://api.openai.com/v1/chat/completions")
+        .post(format!("{host}/v1/chat/completions"))
         .header("Content-Type", "application/json")
         .header("Authorization", format!("Bearer {}", key.into()))
         .json(&req)
@@ -82,6 +87,7 @@ pub async fn send_request(
 
 pub async fn build_feishu_content(
     openai_api_key: Option<String>,
+    openai_host: Option<String>,
     proxy: Option<String>,
     content: String,
 ) -> String {
@@ -94,7 +100,7 @@ pub async fn build_feishu_content(
     res.push_str("\n---\n");
     res.push_str("\n**以下内容为 OpenAI 生成，仅供参考：**\n\n");
     let req = Req::new("gpt-4o", content);
-    let resp = send_request(req, openai_api_key, proxy).await;
+    let resp = send_request(req, openai_api_key, openai_host, proxy).await;
     match resp {
         Err(e) => res.push_str(e.to_string().as_str()),
         Ok(v) => {

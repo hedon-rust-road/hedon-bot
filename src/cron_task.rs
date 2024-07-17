@@ -24,6 +24,7 @@ pub async fn run_every_10_30pm(redis: Arc<Redis>, conf: Arc<Conf>) -> anyhow::Re
                         go_weekly_conf.webhooks.clone(),
                         go_weekly_conf.once_post_limit,
                         conf.openai_api_key.clone(),
+                        conf.openai_host.clone(),
                         conf.proxy.clone(),
                     )
                     .await
@@ -55,6 +56,7 @@ pub async fn run_every_10_30pm(redis: Arc<Redis>, conf: Arc<Conf>) -> anyhow::Re
                         redis_official_blog_conf.webhooks.clone(),
                         redis_official_blog_conf.once_post_limit,
                         conf.openai_api_key.clone(),
+                        conf.openai_host.clone(),
                         conf.proxy.clone(),
                     )
                     .await

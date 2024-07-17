@@ -17,6 +17,14 @@ pub fn trim_str(str: &str) -> String {
     re.replace_all(&str, " ").to_string() // 将匹配到的替换成单个空格
 }
 
+pub fn remove_tailing_slash(s: &str) -> &str {
+    if let Some(s) = s.strip_suffix('/') {
+        s
+    } else {
+        s
+    }
+}
+
 #[cfg(test)]
 mod test_trim_str {
     use super::*;
@@ -54,5 +62,22 @@ mod test_trim_str {
     #[test]
     fn test_unicode_characters() {
         assert_eq!(trim_str("   Привет\tмир  \n"), "Привет мир");
+    }
+}
+
+#[cfg(test)]
+mod test_remove_trailing_slash {
+    use super::*;
+
+    #[test]
+    fn need_to_remove() {
+        let s = "https://example.com/";
+        assert_eq!(remove_tailing_slash(s), "https://example.com");
+    }
+
+    #[test]
+    fn no_need_to_remove() {
+        let s = "https://example.com";
+        assert_eq!(remove_tailing_slash(s), "https://example.com");
     }
 }

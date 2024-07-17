@@ -44,6 +44,7 @@ pub async fn send_feishu_msg(
     webhooks: Vec<String>,
     once_post_limit: u8,
     openai_api_key: Option<String>,
+    openai_host: Option<String>,
     proxy: Option<String>,
 ) -> anyhow::Result<()> {
     info!("start fetching go weekly blogs");
@@ -53,7 +54,13 @@ pub async fn send_feishu_msg(
         if wa.articles.is_empty() {
             continue;
         }
-        let content = build_content(wa.articles, openai_api_key.clone(), proxy.clone()).await;
+        let content = build_content(
+            wa.articles,
+            openai_api_key.clone(),
+            openai_host.clone(),
+            proxy.clone(),
+        )
+        .await;
         for webhook in &webhooks {
             let res: feishu_bot::SendMessageResp = client
             .post(webhook)
@@ -228,6 +235,7 @@ async fn get_rss_articles(
 async fn build_content(
     articles: Vec<Article>,
     openai_api_key: Option<String>,
+    openai_host: Option<String>,
     proxy: Option<String>,
 ) -> String {
     let mut content = String::new();
@@ -237,7 +245,13 @@ async fn build_content(
             content.push_str("---\n");
         }
     }
-    let c = build_feishu_content(openai_api_key, proxy, build_req_content(content.clone())).await;
+    let c = build_feishu_content(
+        openai_api_key,
+        openai_host,
+        proxy,
+        build_req_content(content.clone()),
+    )
+    .await;
     content.push_str(&c);
     content
 }

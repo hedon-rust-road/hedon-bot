@@ -29,6 +29,7 @@ pub async fn send_feishu_msg(
     webhooks: Vec<String>,
     once_post_limit: u8,
     openai_api_key: Option<String>,
+    openai_host: Option<String>,
     proxy: Option<String>,
 ) -> anyhow::Result<()> {
     info!("start fetching redis official blogs");
@@ -36,7 +37,13 @@ pub async fn send_feishu_msg(
     let client = reqwest::Client::new();
     for article in articles {
         thread::sleep(Duration::from_secs(3));
-        let content = build_content(&article, openai_api_key.clone(), proxy.clone()).await;
+        let content = build_content(
+            &article,
+            openai_api_key.clone(),
+            openai_host.clone(),
+            proxy.clone(),
+        )
+        .await;
         let req = &json!({
                     "msg_type": "interactive",
                     "card": {
@@ -138,6 +145,7 @@ fn build_req_content(content: &str) -> String {
 async fn build_content(
     article: &Article,
     openai_api_key: Option<String>,
+    openai_host: Option<String>,
     proxy: Option<String>,
 ) -> String {
     let mut content = String::with_capacity(4096);
@@ -145,6 +153,7 @@ async fn build_content(
     content.push_str(
         &build_feishu_content(
             openai_api_key.clone(),
+            openai_host.clone(),
             proxy.clone(),
             build_req_content(&article.content),
         )
