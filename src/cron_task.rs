@@ -1,6 +1,6 @@
 use std::sync::Arc;
 use tokio_cron_scheduler::{Job, JobScheduler};
-use tracing::{info, warn};
+use tracing::{error, info};
 
 use crate::{
     channels::{go_blog, go_weekly, redis_blog},
@@ -33,7 +33,7 @@ pub async fn run_every_10_30pm(redis: Arc<Redis>, conf: Arc<Conf>) -> anyhow::Re
                     )
                     .await
                     {
-                        warn!("go_weekly error: {:?}", e);
+                        error!("go_weekly error: {:?}", e);
                     }
                 }
             })
@@ -65,7 +65,7 @@ pub async fn run_every_10_30pm(redis: Arc<Redis>, conf: Arc<Conf>) -> anyhow::Re
                     )
                     .await
                     {
-                        warn!("redis_official_blog error: {:?}", e);
+                        error!("redis_official_blog error: {:?}", e);
                     }
                 }
             })
@@ -96,7 +96,7 @@ pub async fn run_every_10_30pm(redis: Arc<Redis>, conf: Arc<Conf>) -> anyhow::Re
                     )
                     .await
                     {
-                        warn!("go_official_blog error: {:?}", e);
+                        error!("go_official_blog error: {:?}", e);
                     }
                 }
             })

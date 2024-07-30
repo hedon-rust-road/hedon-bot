@@ -7,9 +7,9 @@ use crate::{
 use core::fmt;
 use std::vec;
 
-use log::{info, warn};
 use scraper::{Html, Selector};
 use serde_json::json;
+use tracing::{error, info};
 
 use crate::{feishu_bot, redis_base};
 
@@ -101,7 +101,7 @@ pub async fn send_feishu_msg(
             .await?;
 
             if res.code != 0 {
-                warn!(
+                error!(
                     "fetch go weekly blogs failed, code: {}, msg: {}",
                     res.code, res.msg
                 );

@@ -1,7 +1,7 @@
 use std::{thread, time::Duration};
 
-use log::{info, warn};
 use serde_json::json;
+use tracing::{error, info};
 
 use crate::{
     chatgpt::build_feishu_content,
@@ -79,7 +79,7 @@ pub async fn send_feishu_msg(
             let res: feishu_bot::SendMessageResp =
                 client.post(webhook).json(req).send().await?.json().await?;
             if res.code != 0 {
-                warn!(
+                error!(
                     "send redis official blogs to feishu failed, code: {}, msg: {}",
                     res.code, res.msg
                 );
