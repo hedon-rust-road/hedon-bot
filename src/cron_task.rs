@@ -1,9 +1,9 @@
-use log::{info, warn};
 use std::sync::Arc;
 use tokio_cron_scheduler::{Job, JobScheduler};
+use tracing::{info, warn};
 
 use crate::{
-    channels::{go_weekly, redis_blog},
+    channels::{go_blog, go_weekly, redis_blog},
     conf::Conf,
     redis_base::Redis,
 };
@@ -73,6 +73,37 @@ pub async fn run_every_10_30pm(redis: Arc<Redis>, conf: Arc<Conf>) -> anyhow::Re
     })?;
     sched.add(redis_job).await?;
     info!("add redis_official_blog job");
+
+    let go_blog_conf = Arc::new(conf.go_blog.clone());
+    let go_blog_job = Job::new_async(go_blog_conf.cron_expression.as_str(), {
+        let redis = Arc::clone(&redis);
+        let conf = Arc::clone(&conf);
+        let go_blog_conf = Arc::clone(&go_blog_conf);
+        move |uuid, mut l| {
+            let redis = Arc::clone(&redis);
+            let conf = Arc::clone(&conf);
+            let go_blog_conf = Arc::clone(&go_blog_conf);
+            Box::pin(async move {
+                if let Ok(Some(ts)) = l.next_tick_for_job(uuid).await {
+                    info!("Run go_official_blog {}", ts);
+                    if let Err(e) = go_blog::send_feishu_msg(
+                        &redis,
+                        go_blog_conf.webhooks.clone(),
+                        go_blog_conf.once_post_limit,
+                        conf.openai_api_key.clone(),
+                        conf.openai_host.clone(),
+                        conf.proxy.clone(),
+                    )
+                    .await
+                    {
+                        warn!("go_official_blog error: {:?}", e);
+                    }
+                }
+            })
+        }
+    })?;
+    sched.add(go_blog_job).await?;
+    info!("add go_blog job");
 
     sched.start().await?;
     info!("start scheduler");
