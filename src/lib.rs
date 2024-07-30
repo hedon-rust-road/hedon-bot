@@ -2,6 +2,7 @@ use regex::Regex;
 
 pub mod channels;
 
+pub mod atom;
 pub mod chatgpt;
 pub mod conf;
 pub mod cron_task;
