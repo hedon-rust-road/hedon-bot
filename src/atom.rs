@@ -14,11 +14,17 @@ pub struct Atom {
 pub struct Entry {
     pub title: String,
     pub id: String,
-    pub link: String,
+    pub link: Link,
     pub published: String,
     pub updated: String,
     pub summary: String,
     pub content: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Link {
+    #[serde(rename = "@href")]
+    pub href: String,
 }
 
 impl Atom {
@@ -66,6 +72,7 @@ mod tests {
         assert_eq!(atom.id, "tag:blog.golang.org,2013:blog.golang.org");
         assert_eq!(atom.updated, "2024-05-02T00:00:00+00:00");
         assert_eq!(atom.entry.len(), 2);
+        assert_eq!(atom.entry[0].link.href, "https://go.dev/blog/chacha8rand");
         Ok(())
     }
 }

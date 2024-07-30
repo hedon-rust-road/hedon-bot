@@ -59,7 +59,7 @@ pub async fn send_feishu_msg(
                                                 "content": "origin link",
                                                 "tag": "lark_md"
                                         },
-                                        "url": format!("{}", entry.link),
+                                        "url": format!("{}", entry.link.href),
                                         "type": "default",
                                         "value": {}
                                 }],
