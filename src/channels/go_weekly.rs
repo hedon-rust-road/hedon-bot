@@ -282,7 +282,7 @@ mod tests {
 
     #[test]
     fn test_resolve_item_description() {
-        let data = include_str!("../tests/item_description.xml");
+        let data = include_str!("../../tests/item_description.xml");
         let articles = resolve_item_description(data);
         assert_eq!(3, articles.len());
         assert_eq!(

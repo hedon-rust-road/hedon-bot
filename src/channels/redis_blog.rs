@@ -90,7 +90,7 @@ pub async fn send_feishu_msg(
     Ok(())
 }
 
-pub async fn get_rss_articles(
+async fn get_rss_articles(
     redis: Option<&redis_base::Redis>,
     mut once_post_limit: u8,
 ) -> anyhow::Result<(Rss, Vec<Article>)> {

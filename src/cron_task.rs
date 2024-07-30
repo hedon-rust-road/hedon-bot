@@ -2,7 +2,11 @@ use log::{info, warn};
 use std::sync::Arc;
 use tokio_cron_scheduler::{Job, JobScheduler};
 
-use crate::{conf::Conf, go_weekly, redis_base::Redis, redis_blog};
+use crate::{
+    channels::{go_weekly, redis_blog},
+    conf::Conf,
+    redis_base::Redis,
+};
 
 pub async fn run_every_10_30pm(redis: Arc<Redis>, conf: Arc<Conf>) -> anyhow::Result<()> {
     let sched = JobScheduler::new().await?;
