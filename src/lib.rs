@@ -11,6 +11,8 @@ pub mod log;
 pub mod redis_base;
 pub mod rss;
 
+pub const DEFAULT_ONCE_POST_LIMIT: u8 = 5;
+
 pub fn trim_str(str: &str) -> String {
     let str = str.trim().replace(['\t', '\n'], " ");
     let str = str.replace("<p>", "");

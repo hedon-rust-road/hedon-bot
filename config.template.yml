@@ -12,6 +12,12 @@ go_weekly:
     - "http://example.com/webhook2"
   cron_expression: "0 30 10 * * *"
   once_post_limit: 5
+go_blog:
+  webhooks:
+    - "http://example.com/webhook1"
+    - "http://example.com/webhook2"
+  cron_expression: "0 30 10 * * *"
+  once_post_limit: 1
 redis_official_blog:
   webhooks:
     - "http://example.com/webhook1"

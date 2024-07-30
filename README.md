@@ -1,18 +1,20 @@
 # Hedon Bot 🤖
 
-Hedon Bot is a Feishu bot designed to send scheduled updates on the latest news and developments in Go and Rust programming languages. It fetches information from various sources to keep you updated with the most recent trends and changes in these technologies.
+Hedon Bot is a Feishu bot designed to send scheduled updates on the latest news and developments in Go and Rust programming languages. It fetches information from various channels to keep you updated with the most recent trends and changes in these technologies.
 
 
 
 ## Features 🌟
 
 - Periodically fetches articles from [Golang Weekly](https://golangweekly.com/) and sends updates to designated Feishu groups via the bot.
+- Periodically fetches articles from [Go Official Blog](https://go.dev/blog/) and sends updates to designated Feishu groups via the bot.
 - Periodically fetches articles from [Redis Official Blog](https://redis.io/blog/) and sends updates to designated Feishu groups via the bot.
 - Uses ChatGPT to summarize the article content.
 
-## Used Rss Feeds
+## Used Rss/Atom Feeds
 
 - [Golang Weekly](https://cprss.s3.amazonaws.com/golangweekly.com.xml)
+- [Go Official Blog](https://go.dev/blog/feed.atom)
 - [Redis Official Blog](https://redis.io/blog/feed/)
 
 ## Installation 🔧
@@ -36,7 +38,7 @@ Follow these steps to install and set up Hedon-Bot:
    ```bash
    hedon-bot&
    ```
-   Make sure `config.yml` and `log4rs.yml` are in the current directory (command line arguments specifying the configuration file path will be supported later. Please look forward ~)
+   Make sure `config.yml` is in the current directory (command line arguments specifying the configuration file path will be supported later. Please look forward ~)
 
 
 
@@ -46,7 +48,7 @@ Follow these steps to install and set up Hedon-Bot:
 - **openai_host**: The OpenAI api host (optional), if your server environment or area does not support access to the openai website, you need to configure it.
 - **proxy**: The proxy address (optional), used for proxy access to the Open API, if your server environment does not support access to the corresponding website, you need to configure it.
 - **redis**: Configuration for Redis connection. This project uses Redis's `hsetnx` to prevent pushing the same article more than once.
-- **webhooks**: Specify the list of webhooks for various channels. Currently supports the `go_weekly` and `redis_official_blog`, with support for multiple webhooks per channel.
+- **webhooks**: Specify the list of webhooks for various channels. Currently supports the `go_weekly`, `go_blog` and `redis_official_blog`, with support for multiple webhooks per channel.
 - **cron_expression**: Schedule the frequency of fetching updates for each channel using a cron expression format:
    ```
    sec   min   hour   day of month   month   day of week   year
@@ -65,6 +67,10 @@ Follow these steps to install and set up Hedon-Bot:
 - **scraper**: HTML manipulation library.
 - **reqwest**: HTTP client.
 - **redis**: Redis library.
+- **tracing**: Tracing log.
+- **tracing**: Provides structured logging and event tracing for Rust applications.
+- **tracing_subscriber**: Implements log subscribers to handle and format tracing data.
+- **tracing_appender**: Manages log output destinations, supporting asynchronous logging and log file rotation.
 
 
 

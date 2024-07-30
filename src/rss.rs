@@ -1,8 +1,6 @@
 use quick_xml::de::from_str;
 use serde::Deserialize;
 
-pub const DEFAULT_ONCE_POST_LIMIT: u8 = 5;
-
 #[derive(Debug, Deserialize)]
 pub struct Rss {
     pub channel: Channel,

@@ -1,8 +1,8 @@
 use crate::{
     chatgpt::build_feishu_content,
     redis_base::Redis,
-    rss::{resolve_xml_data, send_request, Rss, DEFAULT_ONCE_POST_LIMIT},
-    trim_str,
+    rss::{resolve_xml_data, send_request, Rss},
+    trim_str, DEFAULT_ONCE_POST_LIMIT,
 };
 use core::fmt;
 use std::vec;
