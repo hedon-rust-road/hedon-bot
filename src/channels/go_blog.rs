@@ -33,7 +33,7 @@ pub async fn send_feishu_msg(
     proxy: Option<String>,
 ) -> anyhow::Result<()> {
     info!("start fetching golang official blogs");
-    let entries = get_atom_articles(Some(redis), once_post_limit).await?;
+    let entries = get_atom_articles(Some(redis), once_post_limit, proxy.clone()).await?;
     let client = reqwest::Client::new();
     for entry in entries {
         thread::sleep(Duration::from_secs(3));
@@ -93,11 +93,12 @@ pub async fn send_feishu_msg(
 async fn get_atom_articles(
     redis: Option<&redis_base::Redis>,
     mut once_post_limit: u8,
+    proxy: Option<String>,
 ) -> anyhow::Result<Vec<Entry>> {
     if once_post_limit == 0 {
         once_post_limit = DEFAULT_ONCE_POST_LIMIT
     }
-    let atom = Atom::try_new(GO_BLOG_ATOM_URL).await?;
+    let atom = Atom::try_new(GO_BLOG_ATOM_URL, proxy).await?;
 
     let entries = atom
         .entry

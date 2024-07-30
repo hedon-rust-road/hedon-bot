@@ -1,4 +1,5 @@
 use quick_xml::de::from_str;
+use reqwest::{Client, Proxy};
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
@@ -21,14 +22,20 @@ pub struct Entry {
 }
 
 impl Atom {
-    pub async fn try_new(url: &str) -> anyhow::Result<Atom> {
-        let data = send_request(url).await?;
+    pub async fn try_new(url: &str, proxy: Option<String>) -> anyhow::Result<Atom> {
+        let data = send_request(url, proxy).await?;
         Ok(resolve_xml_data(&data)?)
     }
 }
 
-async fn send_request(url: &str) -> Result<String, reqwest::Error> {
-    let client = reqwest::Client::new();
+async fn send_request(url: &str, proxy: Option<String>) -> Result<String, reqwest::Error> {
+    let client: Client;
+    if let Some(proxy) = proxy {
+        let proxy = Proxy::https(proxy)?;
+        client = Client::builder().proxy(proxy).build()?;
+    } else {
+        client = reqwest::Client::new();
+    }
     let resp = client.get(url).send().await?.text().await?;
     Ok(resp)
 }
@@ -46,7 +53,7 @@ mod tests {
 
     #[tokio::test]
     async fn try_new_should_work() -> anyhow::Result<()> {
-        let atom = Atom::try_new(GO_BLOG_ATOM_URL).await?;
+        let atom = Atom::try_new(GO_BLOG_ATOM_URL, None).await?;
         assert_eq!(atom.title, "The Go Blog");
         Ok(())
     }
