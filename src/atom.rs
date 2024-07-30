@@ -40,7 +40,16 @@ fn resolve_xml_data(data: &str) -> Result<Atom, quick_xml::DeError> {
 
 #[cfg(test)]
 mod tests {
+    use crate::channels::go_blog::GO_BLOG_ATOM_URL;
+
     use super::*;
+
+    #[tokio::test]
+    async fn try_new_should_work() -> anyhow::Result<()> {
+        let atom = Atom::try_new(GO_BLOG_ATOM_URL).await?;
+        assert_eq!(atom.title, "The Go Blog");
+        Ok(())
+    }
 
     #[test]
     fn resolve_xml_data_should_work() -> anyhow::Result<()> {

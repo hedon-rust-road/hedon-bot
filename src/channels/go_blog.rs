@@ -11,7 +11,7 @@ use crate::{
     DEFAULT_ONCE_POST_LIMIT,
 };
 
-const GO_BLOG_ATOM_URL: &str = "https://go.dev/blog/feed.atom";
+pub const GO_BLOG_ATOM_URL: &str = "https://go.dev/blog/feed.atom";
 
 #[derive(Debug)]
 pub struct Article {
