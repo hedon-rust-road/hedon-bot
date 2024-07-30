@@ -32,11 +32,7 @@ Follow these steps to install and set up Hedon-Bot:
 
    Copy the `config.template.yml` to `config.yml` and modify it as needed.
 
-4. **Configure log**
-
-   Modify the `log4rs.yml` log configuration file as needed.
-
-5. **Run Hedon-Bot in the background**
+4. **Run Hedon-Bot in the background**
    ```bash
    hedon-bot&
    ```
@@ -62,8 +58,7 @@ Follow these steps to install and set up Hedon-Bot:
 
 ## Core Crates 📚
 
-- **job_scheduler**: For scheduling tasks.
-- **log4rs**: Logging library.
+- **tokio-cron-scheduler**: For scheduling tasks in async.
 - **quick-xml**: XML parsing library.
 - **serde_yml**: YAML parsing library.
 - **serde_json**: JSON parsing library.
@@ -77,7 +72,6 @@ Follow these steps to install and set up Hedon-Bot:
 
 1. Support for more channels of high-quality Go articles.
 2. Extend support to the Rust programming language.
-
 
 
 ## Contributing 🤝

@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use hedon_bot::{conf::Conf, cron_task, redis_base};
+use hedon_bot::{conf::Conf, cron_task, log::init_logger, redis_base};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -18,8 +18,4 @@ async fn main() -> anyhow::Result<()> {
     let conf = Arc::new(conf);
     cron_task::run_every_10_30pm(redis, conf).await?;
     Ok(())
-}
-
-fn init_logger() {
-    log4rs::init_file("log4rs.yml", Default::default()).unwrap()
 }
