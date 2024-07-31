@@ -5,7 +5,7 @@ use tracing::{error, info};
 
 use crate::{
     chatgpt::build_feishu_content,
-    content_feed::{Atom, Entry},
+    feeds::{Atom, Entry},
     feishu_bot,
     redis_base::{self, Redis},
     DEFAULT_ONCE_POST_LIMIT,

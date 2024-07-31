@@ -1,5 +1,5 @@
 use crate::{
-    chatgpt::build_feishu_content, content_feed::Feed, redis_base::Redis, trim_str,
+    chatgpt::build_feishu_content, feeds::Feed, redis_base::Redis, trim_str,
     DEFAULT_ONCE_POST_LIMIT,
 };
 use core::fmt;

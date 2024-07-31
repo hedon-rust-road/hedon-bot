@@ -4,8 +4,8 @@ pub mod channels;
 
 pub mod chatgpt;
 pub mod conf;
-pub mod content_feed;
 pub mod cron_task;
+pub mod feeds;
 pub mod feishu_bot;
 pub mod log;
 pub mod redis_base;

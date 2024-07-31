@@ -1,5 +1,5 @@
 mod atom;
-mod feed;
+mod rss;
 
 pub use atom::*;
-pub use feed::*;
+pub use rss::*;
