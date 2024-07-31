@@ -105,6 +105,37 @@ pub async fn run_every_10_30pm(redis: Arc<Redis>, conf: Arc<Conf>) -> anyhow::Re
     sched.add(go_blog_job).await?;
     info!("add go_blog job");
 
+    let rust_blog_conf = Arc::new(conf.rust_blog.clone());
+    let rust_blog_job = Job::new_async(rust_blog_conf.cron_expression.as_str(), {
+        let redis = Arc::clone(&redis);
+        let conf = Arc::clone(&conf);
+        let rust_blog_conf = Arc::clone(&rust_blog_conf);
+        move |uuid, mut l| {
+            let redis = Arc::clone(&redis);
+            let conf = Arc::clone(&conf);
+            let rust_blog_conf = Arc::clone(&rust_blog_conf);
+            Box::pin(async move {
+                if let Ok(Some(ts)) = l.next_tick_for_job(uuid).await {
+                    info!("Run rust_official_blog {}", ts);
+                    if let Err(e) = go_blog::send_feishu_msg(
+                        &redis,
+                        rust_blog_conf.webhooks.clone(),
+                        rust_blog_conf.once_post_limit,
+                        conf.openai_api_key.clone(),
+                        conf.openai_host.clone(),
+                        conf.proxy.clone(),
+                    )
+                    .await
+                    {
+                        error!("rust_official_blog error: {:?}", e);
+                    }
+                }
+            })
+        }
+    })?;
+    sched.add(rust_blog_job).await?;
+    info!("add rust_blog job");
+
     sched.start().await?;
     info!("start scheduler");
 
