@@ -1,8 +1,5 @@
 use crate::{
-    chatgpt::build_feishu_content,
-    redis_base::Redis,
-    rss::{resolve_xml_data, send_request, Rss},
-    trim_str, DEFAULT_ONCE_POST_LIMIT,
+    chatgpt::build_feishu_content, redis_base::Redis, rss::Rss, trim_str, DEFAULT_ONCE_POST_LIMIT,
 };
 use core::fmt;
 use std::vec;
@@ -197,8 +194,7 @@ async fn get_rss_articles(
     if once_post_limit == 0 {
         once_post_limit = DEFAULT_ONCE_POST_LIMIT
     }
-    let data = send_request(GO_WEEKLY_RSS_URL).await?;
-    let rss = resolve_xml_data(&data)?;
+    let rss = Rss::try_new(GO_WEEKLY_RSS_URL).await?;
     let mut articles = vec![];
     for item in &rss.channel.items {
         let arts: Vec<Article> = resolve_item_description(&item.description)

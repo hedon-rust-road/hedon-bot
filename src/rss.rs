@@ -28,13 +28,20 @@ pub struct Item {
     pub creator: String,
 }
 
-pub async fn send_request(url: &str) -> Result<String, reqwest::Error> {
+impl Rss {
+    pub async fn try_new(url: &str) -> anyhow::Result<Self> {
+        let resp = send_request(url).await?;
+        Ok(resolve_xml_data(&resp)?)
+    }
+}
+
+async fn send_request(url: &str) -> Result<String, reqwest::Error> {
     let client = reqwest::Client::new();
     let resp = client.get(url).send().await?.text().await?;
     Ok(resp)
 }
 
-pub fn resolve_xml_data(data: &str) -> Result<Rss, quick_xml::DeError> {
+fn resolve_xml_data(data: &str) -> Result<Rss, quick_xml::DeError> {
     let rss: Rss = from_str(data)?;
     Ok(rss)
 }

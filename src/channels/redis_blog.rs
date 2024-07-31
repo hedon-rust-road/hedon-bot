@@ -7,7 +7,7 @@ use crate::{
     chatgpt::build_feishu_content,
     feishu_bot,
     redis_base::{self, Redis},
-    rss::{resolve_xml_data, send_request, Rss},
+    rss::Rss,
     trim_str, DEFAULT_ONCE_POST_LIMIT,
 };
 
@@ -97,8 +97,7 @@ async fn get_rss_articles(
     if once_post_limit == 0 {
         once_post_limit = DEFAULT_ONCE_POST_LIMIT
     }
-    let data = send_request(REDIS_BLOG_RSS_URL).await?;
-    let rss = resolve_xml_data(&data)?;
+    let rss = Rss::try_new(REDIS_BLOG_RSS_URL).await?;
 
     let articles: Vec<Article> = rss
         .channel
