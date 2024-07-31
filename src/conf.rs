@@ -13,6 +13,7 @@ pub struct Conf {
     pub redis: RedisConf,
     pub go_weekly: ArticleSourceConfig,
     pub go_blog: ArticleSourceConfig,
+    pub rust_blog: ArticleSourceConfig,
     pub redis_official_blog: ArticleSourceConfig,
 }
 
@@ -81,6 +82,14 @@ mod tests {
                         "http://example.com/webhook2".to_string()
                     ],
                     once_post_limit: 1,
+                },
+                rust_blog: ArticleSourceConfig {
+                    cron_expression: "0 30 10 * * *".to_string(),
+                    webhooks: vec![
+                        "http://example.com/webhook1".to_string(),
+                        "http://example.com/webhook2".to_string()
+                    ],
+                    once_post_limit: 2,
                 },
                 redis_official_blog: ArticleSourceConfig {
                     cron_expression: "0 30 10 * * *".to_string(),

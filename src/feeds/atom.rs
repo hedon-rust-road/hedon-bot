@@ -10,18 +10,19 @@ pub struct Atom {
     pub entry: Vec<Entry>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Default, Deserialize)]
 pub struct Entry {
     pub title: String,
     pub id: String,
     pub link: Link,
     pub published: String,
     pub updated: String,
+    #[serde(default)]
     pub summary: String,
     pub content: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Default, Deserialize)]
 pub struct Link {
     #[serde(rename = "@href")]
     pub href: String,
@@ -53,19 +54,19 @@ fn resolve_xml_data(data: &str) -> Result<Atom, quick_xml::DeError> {
 
 #[cfg(test)]
 mod tests {
-    use crate::channels::go_blog::GO_BLOG_ATOM_URL;
+    use crate::channels::{go_blog::GO_BLOG_ATOM_URL, rust_blog::RUST_BLOG_ATOM_URL};
 
     use super::*;
 
     #[tokio::test]
-    async fn try_new_should_work() -> anyhow::Result<()> {
+    async fn try_new_from_go_blog_should_work() -> anyhow::Result<()> {
         let atom = Atom::try_new(GO_BLOG_ATOM_URL, None).await?;
         assert_eq!(atom.title, "The Go Blog");
         Ok(())
     }
 
     #[test]
-    fn resolve_xml_data_should_work() -> anyhow::Result<()> {
+    fn resolve_xml_data_from_go_blog_should_work() -> anyhow::Result<()> {
         let data = include_str!("../../fixtures/atom.xml");
         let atom = resolve_xml_data(data)?;
         assert_eq!(atom.title, "The Go Blog");
@@ -73,6 +74,28 @@ mod tests {
         assert_eq!(atom.updated, "2024-05-02T00:00:00+00:00");
         assert_eq!(atom.entry.len(), 2);
         assert_eq!(atom.entry[0].link.href, "https://go.dev/blog/chacha8rand");
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn try_new_from_rust_blog_should_work() -> anyhow::Result<()> {
+        let atom = Atom::try_new(RUST_BLOG_ATOM_URL, None).await?;
+        assert_eq!(atom.title, "Rust Blog");
+        Ok(())
+    }
+
+    #[test]
+    fn resolve_xml_data_from_rust_blog_should_work() -> anyhow::Result<()> {
+        let data = include_str!("../../fixtures/rust_blog.xml");
+        let atom = resolve_xml_data(data)?;
+        assert_eq!(atom.title, "Rust Blog");
+        assert_eq!(atom.id, "https://blog.rust-lang.org/");
+        assert_eq!(atom.updated, "2024-07-29T15:38:27+00:00");
+        assert_eq!(atom.entry.len(), 10);
+        assert_eq!(
+            atom.entry[0].link.href,
+            "https://blog.rust-lang.org/2024/07/29/crates-io-development-update.html"
+        );
         Ok(())
     }
 }
