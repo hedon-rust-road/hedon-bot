@@ -5,9 +5,9 @@ use tracing::{error, info};
 
 use crate::{
     chatgpt::build_feishu_content,
+    content_feed::Feed,
     feishu_bot,
     redis_base::{self, Redis},
-    rss::Rss,
     trim_str, DEFAULT_ONCE_POST_LIMIT,
 };
 
@@ -93,11 +93,11 @@ pub async fn send_feishu_msg(
 async fn get_rss_articles(
     redis: Option<&redis_base::Redis>,
     mut once_post_limit: u8,
-) -> anyhow::Result<(Rss, Vec<Article>)> {
+) -> anyhow::Result<(Feed, Vec<Article>)> {
     if once_post_limit == 0 {
         once_post_limit = DEFAULT_ONCE_POST_LIMIT
     }
-    let rss = Rss::try_new(REDIS_BLOG_RSS_URL).await?;
+    let rss = Feed::try_new(REDIS_BLOG_RSS_URL).await?;
 
     let articles: Vec<Article> = rss
         .channel

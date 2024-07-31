@@ -66,7 +66,7 @@ mod tests {
 
     #[test]
     fn resolve_xml_data_should_work() -> anyhow::Result<()> {
-        let data = include_str!("../fixtures/atom.xml");
+        let data = include_str!("../../fixtures/atom.xml");
         let atom = resolve_xml_data(data)?;
         assert_eq!(atom.title, "The Go Blog");
         assert_eq!(atom.id, "tag:blog.golang.org,2013:blog.golang.org");

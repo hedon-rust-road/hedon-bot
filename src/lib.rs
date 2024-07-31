@@ -2,14 +2,13 @@ use regex::Regex;
 
 pub mod channels;
 
-pub mod atom;
 pub mod chatgpt;
 pub mod conf;
+pub mod content_feed;
 pub mod cron_task;
 pub mod feishu_bot;
 pub mod log;
 pub mod redis_base;
-pub mod rss;
 
 pub const DEFAULT_ONCE_POST_LIMIT: u8 = 5;
 

@@ -2,7 +2,7 @@ use quick_xml::de::from_str;
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
-pub struct Rss {
+pub struct Feed {
     pub channel: Channel,
 }
 
@@ -28,7 +28,7 @@ pub struct Item {
     pub creator: String,
 }
 
-impl Rss {
+impl Feed {
     pub async fn try_new(url: &str) -> anyhow::Result<Self> {
         let resp = send_request(url).await?;
         Ok(resolve_xml_data(&resp)?)
@@ -41,7 +41,21 @@ async fn send_request(url: &str) -> Result<String, reqwest::Error> {
     Ok(resp)
 }
 
-fn resolve_xml_data(data: &str) -> Result<Rss, quick_xml::DeError> {
-    let rss: Rss = from_str(data)?;
+fn resolve_xml_data(data: &str) -> Result<Feed, quick_xml::DeError> {
+    let rss: Feed = from_str(data)?;
     Ok(rss)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn resolve_xml_data_should_work() -> anyhow::Result<()> {
+        let data = include_str!("../../fixtures/redis_feed.xml");
+        let feed = resolve_xml_data(data)?;
+        assert_eq!(feed.channel.title, "Redis");
+        assert_eq!(feed.channel.items.len(), 12);
+        Ok(())
+    }
 }
