@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <generator uri="https://blog.rust-lang.org/inside-rust/" version="0.1.0">Inside Rust Blog</generator>
+    <link href="https://blog.rust-lang.org/inside-rust/feed.xml" rel="self" type="application/atom+xml" />
+    <link href="https://blog.rust-lang.org/inside-rust/" rel="alternate" type="text/html" />
+    <id>https://blog.rust-lang.org/inside-rust/</id>
+    <title>Inside Rust Blog</title>
+    <subtitle>Want to follow along with Rust development? Curious how you might get involved? Take a look!</subtitle>
+    <author>
+        <name>Maintained by the Rust Teams.</name>
+        <uri>https://github.com/rust-lang/blog.rust-lang.org/</uri>
+    </author>
+    <updated>2024-07-31T23:58:49+00:00</updated>
+
+    <entry>
+        <title>Welcome TC to the Rust language design team!</title>
+        <link rel="alternate" href="https://blog.rust-lang.org/inside-rust/2024/08/01/welcome-tc-to-the-lang-team.html" type="text/html" title="Welcome TC to the Rust language design team!" />
+        <published>2024-08-01T00:00:00+00:00</published>
+        <updated>2024-08-01T00:00:00+00:00</updated>
+        <id>https://blog.rust-lang.org/inside-rust/2024/08/01/welcome-tc-to-the-lang-team.html</id>
+        <content type="html" xml:base="https://blog.rust-lang.org/inside-rust/2024/08/01/welcome-tc-to-the-lang-team.html">&lt;p&gt;Please join us in welcoming TC as a new member of the Rust language design team. TC has been a valuable contributor to the Rust project, serving as the lead of the lang-ops team and overseeing the Rust 2024 edition.&lt;/p&gt;
+&lt;p&gt;TC has authored or co-authored several influential RFCs, including &lt;a href&#x3D;&quot;https://rust-lang.github.io/rfcs/3498-lifetime-capture-rules-2024.html&quot;&gt;RFC 3498&lt;/a&gt; on revising capture rules, &lt;a href&#x3D;&quot;https://rust-lang.github.io/rfcs/3617-precise-capturing.html&quot;&gt;RFC 3617&lt;/a&gt; on precise capturing, &lt;a href&#x3D;&quot;https://rust-lang.github.io/rfcs/3484-unsafe-extern-blocks.html&quot;&gt;RFC 3484&lt;/a&gt; on extern blocks, and &lt;a href&#x3D;&quot;https://rust-lang.github.io/rfcs/3513-gen-blocks.html&quot;&gt;RFC 3513&lt;/a&gt; on gen blocks.&lt;/p&gt;
+&lt;p&gt;He has also contributed to numerous projects, including high profile projects like &lt;em&gt;async fn in traits&lt;/em&gt; and &lt;em&gt;type alias impl trait&lt;/em&gt;, and to less prominent efforts like improvements to match ergonomics. He looks for opportunities to unblock owners who are driving important work but need help to get that work over the finish line. During meetings, TC consistently looks to clarify tradeoffs and scope decisions in a way that drives consensus.&lt;/p&gt;
+&lt;p&gt;We are grateful to have TC join the language design team, and we look forward to his continued contributions to the Rust project.&lt;/p&gt;
+</content>
+
+        <author>
+            <name>Niko Matsakis and Tyler Mandry</name>
+        </author>
+    </entry>
+</feed>

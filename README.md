@@ -9,6 +9,7 @@ Hedon Bot is a Feishu bot designed to send scheduled updates on the latest news 
 - Periodically fetches articles from [Golang Weekly](https://golangweekly.com/) and sends updates to designated Feishu groups via the bot.
 - Periodically fetches articles from [Go Official Blog](https://go.dev/blog/) and sends updates to designated Feishu groups via the bot.
 - Periodically fetches articles from [Rust Official Blog](https://blog.rust-lang.org/) and sends updates to designated Feishu groups via the bot.
+- Periodically fetches articles from [Inside Rust Blog](https://blog.rust-lang.org/inside-rust/) and sends updates to designated Feishu groups via the bot.
 - Periodically fetches articles from [Redis Official Blog](https://redis.io/blog/) and sends updates to designated Feishu groups via the bot.
 - Uses ChatGPT to summarize the article content.
 
@@ -17,6 +18,7 @@ Hedon Bot is a Feishu bot designed to send scheduled updates on the latest news 
 - [Golang Weekly](https://cprss.s3.amazonaws.com/golangweekly.com.xml)
 - [Go Official Blog](https://go.dev/blog/feed.atom)
 - [Rust Official Blog](https://blog.rust-lang.org/feed.xml)
+- [Inside Rust Blog](https://blog.rust-lang.org/inside-rust/feed.xml)
 - [Redis Official Blog](https://redis.io/blog/feed/)
 
 ## Installation 🔧
@@ -50,7 +52,7 @@ Follow these steps to install and set up Hedon-Bot:
 - **openai_host**: The OpenAI api host (optional), if your server environment or area does not support access to the openai website, you need to configure it.
 - **proxy**: The proxy address (optional), used for proxy access to the Open API, if your server environment does not support access to the corresponding website, you need to configure it.
 - **redis**: Configuration for Redis connection. This project uses Redis's `hsetnx` to prevent pushing the same article more than once.
-- **webhooks**: Specify the list of webhooks for various channels. Currently supports the `go_weekly`, `go_blog`, `rust_blog` and `redis_official_blog`, with support for multiple webhooks per channel.
+- **webhooks**: Specify the list of webhooks for various channels. Currently supports the `go_weekly`, `go_blog`, `rust_blog`, `inside_rust_blog` and `redis_official_blog`, with support for multiple webhooks per channel.
 - **cron_expression**: Schedule the frequency of fetching updates for each channel using a cron expression format:
    ```
    sec   min   hour   day of month   month   day of week   year

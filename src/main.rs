@@ -16,6 +16,6 @@ async fn main() -> anyhow::Result<()> {
 
     let redis = Arc::new(redis);
     let conf = Arc::new(conf);
-    cron_task::run_every_10_30pm(redis, conf).await?;
+    cron_task::run(redis, conf).await?;
     Ok(())
 }

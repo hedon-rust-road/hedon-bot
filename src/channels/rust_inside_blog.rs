@@ -11,7 +11,7 @@ use crate::{
     DEFAULT_ONCE_POST_LIMIT,
 };
 
-pub const RUST_BLOG_ATOM_URL: &str = "https://blog.rust-lang.org/feed.xml";
+pub const RUST_INSIDE_BLOG_ATOM_URL: &str = "https://blog.rust-lang.org/inside-rust/feed.xml";
 
 pub async fn send_feishu_msg(
     redis: &redis_base::Redis,
@@ -21,7 +21,7 @@ pub async fn send_feishu_msg(
     openai_host: Option<String>,
     proxy: Option<String>,
 ) -> anyhow::Result<()> {
-    info!("start fetching rust official blogs");
+    info!("start fetching rust inside blogs");
     let entries = get_atom_articles(Some(redis), once_post_limit, proxy.clone()).await?;
     let client = reqwest::Client::new();
     for entry in entries {
@@ -60,7 +60,7 @@ pub async fn send_feishu_msg(
                                         "content": format!("{} \n           -- {}", entry.title,  entry.updated),
                                         "tag": "plain_text"
                                 },
-                                "template": "orange",
+                                "template": "blue",
                         }
                 }
         });
@@ -69,13 +69,13 @@ pub async fn send_feishu_msg(
                 client.post(webhook).json(req).send().await?.json().await?;
             if res.code != 0 {
                 error!(
-                    "send rust official blogs to feishu failed, code: {}, msg: {}",
+                    "send rust inside blogs to feishu failed, code: {}, msg: {}",
                     res.code, res.msg
                 );
             }
         }
     }
-    info!("finish fetching rust official blogs");
+    info!("finish fetching rust inside blogs");
     Ok(())
 }
 
@@ -87,14 +87,14 @@ async fn get_atom_articles(
     if once_post_limit == 0 {
         once_post_limit = DEFAULT_ONCE_POST_LIMIT
     }
-    let atom = Atom::try_new(RUST_BLOG_ATOM_URL, proxy).await?;
+    let atom = Atom::try_new(RUST_INSIDE_BLOG_ATOM_URL, proxy).await?;
 
     let entries = atom
         .entry
         .into_iter()
         .filter(|v| {
             if let Some(r) = redis {
-                r.setnx(Redis::HSET_RUST_BLOG_KEY, &v.id)
+                r.setnx(Redis::HSET_RUST_INSIDE_BLOG_KEY, &v.id)
             } else {
                 true
             }
@@ -114,7 +114,7 @@ async fn get_atom_articles(
 
 fn build_req_content(content: &str) -> String {
     let mut res = String::with_capacity(content.len() + 128);
-    res.push_str("这是 Rust Programming Language 的一篇文章的详细内容：\n");
+    res.push_str("这是 Rust inside 的一篇文章的详细内容：\n");
     res.push_str(content);
     res.push('\n');
     res.push_str("请你使用中文对文章进行总结概括，不要超过150个字。\n");

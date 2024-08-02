@@ -9,6 +9,7 @@ impl Redis {
     pub const HSET_REDIS_BLOG_KEY: &'static str = "hedon-bot:redis-blog-memory";
     pub const HSET_GO_BLOG_KEY: &'static str = "hedon-bot:go-blog-memory";
     pub const HSET_RUST_BLOG_KEY: &'static str = "hedon-bot:rust-blog-memory";
+    pub const HSET_RUST_INSIDE_BLOG_KEY: &'static str = "hedon-bot:rust-inside-blog-memory";
 
     pub fn new(username: &str, password: &str, host: &str, port: u32) -> anyhow::Result<Redis> {
         let client = connect_redis(username, password, host, port)?;

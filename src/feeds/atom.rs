@@ -54,7 +54,10 @@ fn resolve_xml_data(data: &str) -> Result<Atom, quick_xml::DeError> {
 
 #[cfg(test)]
 mod tests {
-    use crate::channels::{go_blog::GO_BLOG_ATOM_URL, rust_blog::RUST_BLOG_ATOM_URL};
+    use crate::channels::{
+        go_blog::GO_BLOG_ATOM_URL, rust_blog::RUST_BLOG_ATOM_URL,
+        rust_inside_blog::RUST_INSIDE_BLOG_ATOM_URL,
+    };
 
     use super::*;
 
@@ -95,6 +98,28 @@ mod tests {
         assert_eq!(
             atom.entry[0].link.href,
             "https://blog.rust-lang.org/2024/07/29/crates-io-development-update.html"
+        );
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn try_new_from_rust_inside_blog_should_work() -> anyhow::Result<()> {
+        let atom = Atom::try_new(RUST_INSIDE_BLOG_ATOM_URL, None).await?;
+        assert_eq!(atom.title, "Inside Rust Blog");
+        Ok(())
+    }
+
+    #[test]
+    fn resolve_xml_data_from_rust_inside_blog_should_work() -> anyhow::Result<()> {
+        let data = include_str!("../../fixtures/rust_inside_blog.xml");
+        let atom = resolve_xml_data(data)?;
+        assert_eq!(atom.title, "Inside Rust Blog");
+        assert_eq!(atom.id, "https://blog.rust-lang.org/inside-rust/");
+        assert_eq!(atom.updated, "2024-07-31T23:58:49+00:00");
+        assert_eq!(atom.entry.len(), 1);
+        assert_eq!(
+            atom.entry[0].link.href,
+            "https://blog.rust-lang.org/inside-rust/2024/08/01/welcome-tc-to-the-lang-team.html"
         );
         Ok(())
     }
