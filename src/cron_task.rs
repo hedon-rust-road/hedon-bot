@@ -3,7 +3,7 @@ use tokio_cron_scheduler::{Job, JobScheduler};
 use tracing::{error, info};
 
 use crate::{
-    channels::{go_blog, go_weekly, redis_blog},
+    channels::{go_blog, go_weekly, redis_blog, rust_inside_blog},
     conf::Conf,
     redis_base::Redis,
 };
@@ -148,7 +148,7 @@ pub async fn run(redis: Arc<Redis>, conf: Arc<Conf>) -> anyhow::Result<()> {
             Box::pin(async move {
                 if let Ok(Some(ts)) = l.next_tick_for_job(uuid).await {
                     info!("Run rust_inside_blog {}", ts);
-                    if let Err(e) = go_blog::send_feishu_msg(
+                    if let Err(e) = rust_inside_blog::send_feishu_msg(
                         &redis,
                         rust_inside_blog_conf.webhooks.clone(),
                         rust_inside_blog_conf.once_post_limit,
