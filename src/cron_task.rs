@@ -1,174 +1,131 @@
+use chrono::{FixedOffset, Local, TimeZone};
+use cron_tab::AsyncCron;
 use std::sync::Arc;
-use tokio_cron_scheduler::{Job, JobScheduler};
-use tracing::{error, info};
+use tracing::info;
 
 use crate::{
-    channels::{go_blog, go_weekly, redis_blog, rust_inside_blog},
+    channels::{go_blog, go_weekly, redis_blog, rust_blog, rust_inside_blog},
     conf::Conf,
     redis_base::Redis,
 };
 
-pub async fn run(redis: Arc<Redis>, conf: Arc<Conf>) -> anyhow::Result<()> {
-    let sched = JobScheduler::new().await?;
+async fn run_jobs(redis: Arc<Redis>, conf: Arc<Conf>) -> anyhow::Result<()> {
+    let local_tz = Local::from_offset(&FixedOffset::east_opt(8 * 3600).unwrap());
+    let mut cron = AsyncCron::new(local_tz);
 
-    let go_weekly_conf = Arc::new(conf.go_weekly.clone());
-    let go_weekly_job = Job::new_async(go_weekly_conf.cron_expression.as_str(), {
-        let redis = Arc::clone(&redis);
-        let conf = Arc::clone(&conf);
-        let go_weekly_conf = Arc::clone(&go_weekly_conf);
-        move |uuid, mut l| {
-            let redis = Arc::clone(&redis);
-            let conf = Arc::clone(&conf);
-            let go_weekly_conf = Arc::clone(&go_weekly_conf);
-            Box::pin(async move {
-                if let Ok(Some(ts)) = l.next_tick_for_job(uuid).await {
-                    info!("Run go_weekly {}", ts);
-                    if let Err(e) = go_weekly::send_feishu_msg(
-                        &redis,
-                        go_weekly_conf.webhooks.clone(),
-                        go_weekly_conf.once_post_limit,
-                        conf.openai_api_key.clone(),
-                        conf.openai_host.clone(),
-                        conf.proxy.clone(),
-                    )
-                    .await
-                    {
-                        error!("go_weekly error: {:?}", e);
-                    }
-                }
-            })
+    let redis_clone = redis.clone();
+    let conf_clone = conf.clone();
+    cron.add_fn(&conf.go_weekly.cron_expression, move || {
+        let redis = redis_clone.clone();
+        let conf = conf_clone.clone();
+        async move {
+            go_weekly::send_feishu_msg(
+                redis.as_ref(),
+                conf.go_weekly.webhooks.clone(),
+                conf.go_weekly.once_post_limit,
+                conf.openai_api_key.clone(),
+                conf.openai_host.clone(),
+                conf.proxy.clone(),
+            )
+            .await
+            .unwrap();
         }
-    })?;
-
-    sched.add(go_weekly_job).await?;
+    })
+    .await?;
     info!("add go_weekly job");
 
-    let redis_official_blog_conf = Arc::new(conf.redis_official_blog.clone());
-    let redis_job = Job::new_async(redis_official_blog_conf.cron_expression.as_str(), {
-        let redis = Arc::clone(&redis);
-        let conf = Arc::clone(&conf);
-        let redis_official_blog_conf = Arc::clone(&redis_official_blog_conf);
-        move |uuid, mut l| {
-            let redis = Arc::clone(&redis);
-            let conf = Arc::clone(&conf);
-            let redis_official_blog_conf = Arc::clone(&redis_official_blog_conf);
-            Box::pin(async move {
-                if let Ok(Some(ts)) = l.next_tick_for_job(uuid).await {
-                    info!("Run redis_official_blog {}", ts);
-                    if let Err(e) = redis_blog::send_feishu_msg(
-                        &redis,
-                        redis_official_blog_conf.webhooks.clone(),
-                        redis_official_blog_conf.once_post_limit,
-                        conf.openai_api_key.clone(),
-                        conf.openai_host.clone(),
-                        conf.proxy.clone(),
-                    )
-                    .await
-                    {
-                        error!("redis_official_blog error: {:?}", e);
-                    }
-                }
-            })
+    let redis_clone = redis.clone();
+    let conf_clone = conf.clone();
+    cron.add_fn(&conf.redis_official_blog.cron_expression, move || {
+        let redis = redis_clone.clone();
+        let conf = conf_clone.clone();
+        async move {
+            redis_blog::send_feishu_msg(
+                redis.as_ref(),
+                conf.redis_official_blog.webhooks.clone(),
+                conf.redis_official_blog.once_post_limit,
+                conf.openai_api_key.clone(),
+                conf.openai_host.clone(),
+                conf.proxy.clone(),
+            )
+            .await
+            .unwrap();
         }
-    })?;
-    sched.add(redis_job).await?;
+    })
+    .await?;
     info!("add redis_official_blog job");
 
-    let go_blog_conf = Arc::new(conf.go_blog.clone());
-    let go_blog_job = Job::new_async(go_blog_conf.cron_expression.as_str(), {
-        let redis = Arc::clone(&redis);
-        let conf = Arc::clone(&conf);
-        let go_blog_conf = Arc::clone(&go_blog_conf);
-        move |uuid, mut l| {
-            let redis = Arc::clone(&redis);
-            let conf = Arc::clone(&conf);
-            let go_blog_conf = Arc::clone(&go_blog_conf);
-            Box::pin(async move {
-                if let Ok(Some(ts)) = l.next_tick_for_job(uuid).await {
-                    info!("Run go_official_blog {}", ts);
-                    if let Err(e) = go_blog::send_feishu_msg(
-                        &redis,
-                        go_blog_conf.webhooks.clone(),
-                        go_blog_conf.once_post_limit,
-                        conf.openai_api_key.clone(),
-                        conf.openai_host.clone(),
-                        conf.proxy.clone(),
-                    )
-                    .await
-                    {
-                        error!("go_official_blog error: {:?}", e);
-                    }
-                }
-            })
+    let redis_clone = redis.clone();
+    let conf_clone = conf.clone();
+    cron.add_fn(&conf.go_blog.cron_expression, move || {
+        let redis = redis_clone.clone();
+        let conf = conf_clone.clone();
+        async move {
+            go_blog::send_feishu_msg(
+                redis.as_ref(),
+                conf.go_blog.webhooks.clone(),
+                conf.go_blog.once_post_limit,
+                conf.openai_api_key.clone(),
+                conf.openai_host.clone(),
+                conf.proxy.clone(),
+            )
+            .await
+            .unwrap();
         }
-    })?;
-    sched.add(go_blog_job).await?;
+    })
+    .await?;
     info!("add go_blog job");
 
-    let rust_blog_conf = Arc::new(conf.rust_blog.clone());
-    let rust_blog_job = Job::new_async(rust_blog_conf.cron_expression.as_str(), {
-        let redis = Arc::clone(&redis);
-        let conf = Arc::clone(&conf);
-        let rust_blog_conf = Arc::clone(&rust_blog_conf);
-        move |uuid, mut l| {
-            let redis = Arc::clone(&redis);
-            let conf = Arc::clone(&conf);
-            let rust_blog_conf = Arc::clone(&rust_blog_conf);
-            Box::pin(async move {
-                if let Ok(Some(ts)) = l.next_tick_for_job(uuid).await {
-                    info!("Run rust_official_blog {}", ts);
-                    if let Err(e) = go_blog::send_feishu_msg(
-                        &redis,
-                        rust_blog_conf.webhooks.clone(),
-                        rust_blog_conf.once_post_limit,
-                        conf.openai_api_key.clone(),
-                        conf.openai_host.clone(),
-                        conf.proxy.clone(),
-                    )
-                    .await
-                    {
-                        error!("rust_official_blog error: {:?}", e);
-                    }
-                }
-            })
+    let redis_clone = redis.clone();
+    let conf_clone = conf.clone();
+    cron.add_fn(&conf.rust_blog.cron_expression, move || {
+        let redis = redis_clone.clone();
+        let conf = conf_clone.clone();
+        async move {
+            rust_blog::send_feishu_msg(
+                redis.as_ref(),
+                conf.rust_blog.webhooks.clone(),
+                conf.rust_blog.once_post_limit,
+                conf.openai_api_key.clone(),
+                conf.openai_host.clone(),
+                conf.proxy.clone(),
+            )
+            .await
+            .unwrap();
         }
-    })?;
-    sched.add(rust_blog_job).await?;
+    })
+    .await?;
     info!("add rust_blog job");
 
-    let rust_inside_blog_conf = Arc::new(conf.rust_inside_blog.clone());
-    let rust_inside_blog_job = Job::new_async(rust_inside_blog_conf.cron_expression.as_str(), {
-        let redis = Arc::clone(&redis);
-        let conf = Arc::clone(&conf);
-        let rust_inside_blog_conf = Arc::clone(&rust_inside_blog_conf);
-        move |uuid, mut l| {
-            let redis = Arc::clone(&redis);
-            let conf = Arc::clone(&conf);
-            let rust_inside_blog_conf = Arc::clone(&rust_inside_blog_conf);
-            Box::pin(async move {
-                if let Ok(Some(ts)) = l.next_tick_for_job(uuid).await {
-                    info!("Run rust_inside_blog {}", ts);
-                    if let Err(e) = rust_inside_blog::send_feishu_msg(
-                        &redis,
-                        rust_inside_blog_conf.webhooks.clone(),
-                        rust_inside_blog_conf.once_post_limit,
-                        conf.openai_api_key.clone(),
-                        conf.openai_host.clone(),
-                        conf.proxy.clone(),
-                    )
-                    .await
-                    {
-                        error!("rust_inside_blog error: {:?}", e);
-                    }
-                }
-            })
+    let redis_clone = redis.clone();
+    let conf_clone = conf.clone();
+    cron.add_fn(&conf.rust_inside_blog.cron_expression, move || {
+        let redis = redis_clone.clone();
+        let conf = conf_clone.clone();
+        async move {
+            rust_inside_blog::send_feishu_msg(
+                redis.as_ref(),
+                conf.rust_inside_blog.webhooks.clone(),
+                conf.rust_inside_blog.once_post_limit,
+                conf.openai_api_key.clone(),
+                conf.openai_host.clone(),
+                conf.proxy.clone(),
+            )
+            .await
+            .unwrap();
         }
-    })?;
-    sched.add(rust_inside_blog_job).await?;
+    })
+    .await?;
     info!("add rust_inside_blog job");
 
-    sched.start().await?;
-    info!("start scheduler");
+    cron.start().await;
+
+    info!("cron task started");
+    Ok(())
+}
+
+pub async fn run(redis: Arc<Redis>, conf: Arc<Conf>) -> anyhow::Result<()> {
+    run_jobs(redis, conf).await?;
 
     loop {
         tokio::time::sleep(tokio::time::Duration::from_micros(500)).await;

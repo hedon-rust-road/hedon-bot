@@ -69,7 +69,7 @@ mod tests {
                     port: 6379,
                 },
                 go_weekly: ArticleSourceConfig {
-                    cron_expression: "0 30 10 * * *".to_string(),
+                    cron_expression: "0 30 10 * * * *".to_string(),
                     webhooks: vec![
                         "http://example.com/webhook1".to_string(),
                         "http://example.com/webhook2".to_string()
@@ -77,7 +77,7 @@ mod tests {
                     once_post_limit: 5,
                 },
                 go_blog: ArticleSourceConfig {
-                    cron_expression: "0 30 10 * * *".to_string(),
+                    cron_expression: "0 30 10 * * * *".to_string(),
                     webhooks: vec![
                         "http://example.com/webhook1".to_string(),
                         "http://example.com/webhook2".to_string()
@@ -85,7 +85,7 @@ mod tests {
                     once_post_limit: 1,
                 },
                 rust_blog: ArticleSourceConfig {
-                    cron_expression: "0 30 10 * * *".to_string(),
+                    cron_expression: "0 30 10 * * * *".to_string(),
                     webhooks: vec![
                         "http://example.com/webhook1".to_string(),
                         "http://example.com/webhook2".to_string()
@@ -93,7 +93,7 @@ mod tests {
                     once_post_limit: 2,
                 },
                 rust_inside_blog: ArticleSourceConfig {
-                    cron_expression: "0 30 10 * * *".to_string(),
+                    cron_expression: "0 30 10 * * * *".to_string(),
                     webhooks: vec![
                         "http://example.com/webhook1".to_string(),
                         "http://example.com/webhook2".to_string()
@@ -101,7 +101,7 @@ mod tests {
                     once_post_limit: 3,
                 },
                 redis_official_blog: ArticleSourceConfig {
-                    cron_expression: "0 30 10 * * *".to_string(),
+                    cron_expression: "0 30 10 * * * *".to_string(),
                     webhooks: vec![
                         "http://example.com/webhook1".to_string(),
                         "http://example.com/webhook2".to_string()

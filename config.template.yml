@@ -10,29 +10,29 @@ go_weekly:
   webhooks:
     - "http://example.com/webhook1"
     - "http://example.com/webhook2"
-  cron_expression: "0 30 10 * * *"
+  cron_expression: "0 30 10 * * * *"
   once_post_limit: 5
 go_blog:
   webhooks:
     - "http://example.com/webhook1"
     - "http://example.com/webhook2"
-  cron_expression: "0 30 10 * * *"
+  cron_expression: "0 30 10 * * * *"
   once_post_limit: 1
 rust_blog:
   webhooks:
     - "http://example.com/webhook1"
     - "http://example.com/webhook2"
-  cron_expression: "0 30 10 * * *"
+  cron_expression: "0 30 10 * * * *"
   once_post_limit: 2
 rust_inside_blog:
   webhooks:
     - "http://example.com/webhook1"
     - "http://example.com/webhook2"
-  cron_expression: "0 30 10 * * *"
+  cron_expression: "0 30 10 * * * *"
   once_post_limit: 3
 redis_official_blog:
   webhooks:
     - "http://example.com/webhook1"
     - "http://example.com/webhook2"
-  cron_expression: "0 30 10 * * *"
+  cron_expression: "0 30 10 * * * *"
   once_post_limit: 1
