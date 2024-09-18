@@ -23,6 +23,10 @@ pub async fn send_feishu_msg(
 ) -> anyhow::Result<()> {
     info!("start fetching rust official blogs");
     let entries = get_atom_articles(Some(redis), once_post_limit, proxy.clone()).await?;
+    info!(
+        "fetch rust official blogs success, entries: {}",
+        entries.len()
+    );
     let client = reqwest::Client::new();
     for entry in entries {
         thread::sleep(Duration::from_secs(3));
@@ -33,6 +37,7 @@ pub async fn send_feishu_msg(
             proxy.clone(),
         )
         .await;
+        info!("build rust official blogs content success");
         let req = &json!({
                     "msg_type": "interactive",
                     "card": {

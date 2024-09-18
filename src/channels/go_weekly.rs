@@ -47,6 +47,10 @@ pub async fn send_feishu_msg(
 ) -> anyhow::Result<()> {
     info!("start fetching go weekly blogs");
     let (rss, articles) = get_rss_articles(Some(redis), once_post_limit).await?;
+    info!(
+        "fetch go weekly blogs success, articles: {}",
+        articles.len()
+    );
     let client = reqwest::Client::new();
     for wa in articles {
         if wa.articles.is_empty() {
@@ -59,6 +63,7 @@ pub async fn send_feishu_msg(
             proxy.clone(),
         )
         .await;
+        info!("build go weekly content success");
         for webhook in &webhooks {
             let res: feishu_bot::SendMessageResp = client
             .post(webhook)

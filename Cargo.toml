@@ -9,6 +9,7 @@ edition = "2021"
 anyhow = "1.0.83"
 chrono = "0.4.38"
 cron_tab = { version = "0.2.2", features = ["async"] }
+futures = "0.3.30"
 log = "0.4.21"
 quick-xml = { version = "0.31.0", features = ["serde", "serialize"] }
 redis = "0.25.3"

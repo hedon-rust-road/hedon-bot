@@ -34,6 +34,10 @@ pub async fn send_feishu_msg(
 ) -> anyhow::Result<()> {
     info!("start fetching redis official blogs");
     let (_, articles) = get_rss_articles(Some(redis), once_post_limit).await?;
+    info!(
+        "fetch redis official blogs success, articles count: {}",
+        articles.len()
+    );
     let client = reqwest::Client::new();
     for article in articles {
         thread::sleep(Duration::from_secs(3));
@@ -44,6 +48,7 @@ pub async fn send_feishu_msg(
             proxy.clone(),
         )
         .await;
+        info!("build redis official blogs content success");
         let req = &json!({
                     "msg_type": "interactive",
                     "card": {
