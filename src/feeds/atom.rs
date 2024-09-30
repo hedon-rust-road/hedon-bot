@@ -1,6 +1,7 @@
 use quick_xml::de::from_str;
 use reqwest::{Client, Proxy};
 use serde::Deserialize;
+use tracing::info;
 
 #[derive(Debug, Deserialize)]
 pub struct Atom {
@@ -36,6 +37,7 @@ impl Atom {
 }
 
 async fn send_request(url: &str, proxy: Option<String>) -> Result<String, reqwest::Error> {
+    info!("sending request to  get atom data from {}", url);
     let client: Client;
     if let Some(proxy) = proxy {
         let proxy = Proxy::https(proxy)?;
@@ -44,11 +46,14 @@ async fn send_request(url: &str, proxy: Option<String>) -> Result<String, reqwes
         client = reqwest::Client::new();
     }
     let resp = client.get(url).send().await?.text().await?;
+    info!("get atom data from {} success", url);
     Ok(resp)
 }
 
 fn resolve_xml_data(data: &str) -> Result<Atom, quick_xml::DeError> {
+    info!("resolving xml data");
     let atom: Atom = from_str(data)?;
+    info!("resolving xml data success");
     Ok(atom)
 }
 
