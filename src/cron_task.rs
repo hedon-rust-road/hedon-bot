@@ -1,7 +1,7 @@
 use chrono::{FixedOffset, Local, TimeZone};
 use cron_tab::AsyncCron;
 use std::sync::Arc;
-use tracing::info;
+use tracing::{error, info};
 
 use crate::{
     channels::{go_blog, go_weekly, redis_blog, rust_blog, rust_inside_blog},
@@ -19,7 +19,7 @@ async fn run_jobs(redis: Arc<Redis>, conf: Arc<Conf>) -> anyhow::Result<()> {
         let redis = redis_clone.clone();
         let conf = conf_clone.clone();
         async move {
-            go_weekly::send_feishu_msg(
+            match go_weekly::send_feishu_msg(
                 redis.as_ref(),
                 conf.go_weekly.webhooks.clone(),
                 conf.go_weekly.once_post_limit,
@@ -28,7 +28,10 @@ async fn run_jobs(redis: Arc<Redis>, conf: Arc<Conf>) -> anyhow::Result<()> {
                 conf.proxy.clone(),
             )
             .await
-            .unwrap();
+            {
+                Ok(_) => info!("send go weekly msg success"),
+                Err(e) => error!("send go weekly msg failed: {}", e),
+            }
         }
     })
     .await?;
@@ -40,7 +43,7 @@ async fn run_jobs(redis: Arc<Redis>, conf: Arc<Conf>) -> anyhow::Result<()> {
         let redis = redis_clone.clone();
         let conf = conf_clone.clone();
         async move {
-            redis_blog::send_feishu_msg(
+            match redis_blog::send_feishu_msg(
                 redis.as_ref(),
                 conf.redis_official_blog.webhooks.clone(),
                 conf.redis_official_blog.once_post_limit,
@@ -49,7 +52,10 @@ async fn run_jobs(redis: Arc<Redis>, conf: Arc<Conf>) -> anyhow::Result<()> {
                 conf.proxy.clone(),
             )
             .await
-            .unwrap();
+            {
+                Ok(_) => info!("send redis official blog msg success"),
+                Err(e) => error!("send redis official blog msg failed: {}", e),
+            }
         }
     })
     .await?;
@@ -61,7 +67,7 @@ async fn run_jobs(redis: Arc<Redis>, conf: Arc<Conf>) -> anyhow::Result<()> {
         let redis = redis_clone.clone();
         let conf = conf_clone.clone();
         async move {
-            go_blog::send_feishu_msg(
+            match go_blog::send_feishu_msg(
                 redis.as_ref(),
                 conf.go_blog.webhooks.clone(),
                 conf.go_blog.once_post_limit,
@@ -70,7 +76,10 @@ async fn run_jobs(redis: Arc<Redis>, conf: Arc<Conf>) -> anyhow::Result<()> {
                 conf.proxy.clone(),
             )
             .await
-            .unwrap();
+            {
+                Ok(_) => info!("send go blog msg success"),
+                Err(e) => error!("send go blog msg failed: {}", e),
+            }
         }
     })
     .await?;
@@ -82,7 +91,7 @@ async fn run_jobs(redis: Arc<Redis>, conf: Arc<Conf>) -> anyhow::Result<()> {
         let redis = redis_clone.clone();
         let conf = conf_clone.clone();
         async move {
-            rust_blog::send_feishu_msg(
+            match rust_blog::send_feishu_msg(
                 redis.as_ref(),
                 conf.rust_blog.webhooks.clone(),
                 conf.rust_blog.once_post_limit,
@@ -91,7 +100,10 @@ async fn run_jobs(redis: Arc<Redis>, conf: Arc<Conf>) -> anyhow::Result<()> {
                 conf.proxy.clone(),
             )
             .await
-            .unwrap();
+            {
+                Ok(_) => info!("send rust blog msg success"),
+                Err(e) => error!("send rust blog msg failed: {}", e),
+            }
         }
     })
     .await?;
@@ -103,7 +115,7 @@ async fn run_jobs(redis: Arc<Redis>, conf: Arc<Conf>) -> anyhow::Result<()> {
         let redis = redis_clone.clone();
         let conf = conf_clone.clone();
         async move {
-            rust_inside_blog::send_feishu_msg(
+            match rust_inside_blog::send_feishu_msg(
                 redis.as_ref(),
                 conf.rust_inside_blog.webhooks.clone(),
                 conf.rust_inside_blog.once_post_limit,
@@ -112,7 +124,10 @@ async fn run_jobs(redis: Arc<Redis>, conf: Arc<Conf>) -> anyhow::Result<()> {
                 conf.proxy.clone(),
             )
             .await
-            .unwrap();
+            {
+                Ok(_) => info!("send rust inside blog msg success"),
+                Err(e) => error!("send rust inside blog msg failed: {}", e),
+            }
         }
     })
     .await?;
