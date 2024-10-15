@@ -103,6 +103,10 @@ async fn get_atom_articles(
     if once_post_limit == 0 {
         once_post_limit = DEFAULT_ONCE_POST_LIMIT
     }
+    info!(
+        "try to get {} atom articles from {}",
+        once_post_limit, GO_BLOG_ATOM_URL
+    );
     let atom = Atom::try_new(GO_BLOG_ATOM_URL, proxy).await?;
 
     let entries = atom

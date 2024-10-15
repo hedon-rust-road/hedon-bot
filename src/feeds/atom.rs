@@ -37,7 +37,11 @@ impl Atom {
 }
 
 async fn send_request(url: &str, proxy: Option<String>) -> Result<String, reqwest::Error> {
-    info!("sending request to get atom data from {}", url);
+    info!(
+        "sending request to get atom data from {}, use proxy: {}",
+        url,
+        proxy.is_some()
+    );
     let client: Client;
     if let Some(proxy) = proxy {
         let proxy = Proxy::https(proxy)?;
