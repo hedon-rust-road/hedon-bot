@@ -1,5 +1,6 @@
 use quick_xml::de::from_str;
 use serde::Deserialize;
+use tracing::info;
 
 #[derive(Debug, Deserialize)]
 pub struct Feed {
@@ -30,19 +31,28 @@ pub struct Item {
 
 impl Feed {
     pub async fn try_new(url: &str) -> anyhow::Result<Self> {
+        info!("start fetching rss, url: {}", url);
         let resp = send_request(url).await?;
         Ok(resolve_xml_data(&resp)?)
     }
 }
 
 async fn send_request(url: &str) -> Result<String, reqwest::Error> {
+    info!("start sending rss request, url: {}", url);
     let client = reqwest::Client::new();
     let resp = client.get(url).send().await?.text().await?;
+    info!(
+        "get rss response, url: {}, resp length: {}",
+        url,
+        resp.len()
+    );
     Ok(resp)
 }
 
 fn resolve_xml_data(data: &str) -> Result<Feed, quick_xml::DeError> {
+    info!("start resolving xml data");
     let rss: Feed = from_str(data)?;
+    info!("resolve xml data success");
     Ok(rss)
 }
 

@@ -200,6 +200,10 @@ async fn get_rss_articles(
     if once_post_limit == 0 {
         once_post_limit = DEFAULT_ONCE_POST_LIMIT
     }
+    info!(
+        "start fetching go weekly blogs, once_post_limit: {}, url: {}",
+        once_post_limit, GO_WEEKLY_RSS_URL
+    );
     let rss = Feed::try_new(GO_WEEKLY_RSS_URL).await?;
     let mut articles = vec![];
     for item in &rss.channel.items {
